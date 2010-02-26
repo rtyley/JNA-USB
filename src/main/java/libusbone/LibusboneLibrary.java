@@ -8,17 +8,38 @@ package libusbone;
 public interface LibusboneLibrary extends com.sun.jna.Library {
 //	public static final java.lang.String JNA_LIBRARY_NAME = com.ochafik.lang.jnaerator.runtime.LibraryExtractor.getLibraryPath("libusbone", true, libusbone.LibusboneLibrary.class);
 //	public static final com.sun.jna.NativeLibrary JNA_NATIVE_LIB = com.sun.jna.NativeLibrary.getInstance(libusbone.LibusboneLibrary.JNA_LIBRARY_NAME, com.ochafik.lang.jnaerator.runtime.MangledFunctionMapper.DEFAULT_OPTIONS);
-//	
-	
-	
-	//public static final libusbone.LibusboneLibrary INSTANCE = (libusbone.LibusboneLibrary)com.sun.jna.Native.loadLibrary(libusbone.LibusboneLibrary.JNA_LIBRARY_NAME, libusbone.LibusboneLibrary.class, com.ochafik.lang.jnaerator.runtime.MangledFunctionMapper.DEFAULT_OPTIONS);
 	public static final libusbone.LibusboneLibrary INSTANCE = (libusbone.LibusboneLibrary)com.sun.jna.Native.loadLibrary("libusb-1.0", libusbone.LibusboneLibrary.class);
-	
-	
+	/**
+	 * Values for the first argument to `getitimer' and `setitimer'.<br>
+	 * <i>native declaration : /usr/include/sys/time.h:90</i><br>
+	 * enum values
+	 */
+	public static interface __itimer_which {
+		/**
+		 * Timers run in real time.<br>
+		 * Timers run in real time.<br>
+		 * <i>native declaration : /usr/include/sys/time.h:93</i>
+		 */
+		public static final int ITIMER_REAL = 0;
+		/**
+		 * Timers run only when the process is executing.<br>
+		 * Timers run only when the process is executing.<br>
+		 * <i>native declaration : /usr/include/sys/time.h:96</i>
+		 */
+		public static final int ITIMER_VIRTUAL = 1;
+		/**
+		 * Timers run when the process is executing and when<br>
+		 * the system is executing on behalf of the process.<br>
+		 * Timers run when the process is executing and when<br>
+		 * the system is executing on behalf of the process.<br>
+		 * <i>native declaration : /usr/include/sys/time.h:100</i>
+		 */
+		public static final int ITIMER_PROF = 2;
+	}
 	/**
 	 * \ingroup desc<br>
 	 * Device and/or Interface Class codes<br>
-	 * <i>native declaration : /usr/include/limits.h:39</i><br>
+	 * <i>native declaration : /usr/include/limits.h:146</i><br>
 	 * enum values
 	 */
 	public static interface libusb_class_code {
@@ -29,123 +50,123 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 		 * In the context of a \ref libusb_device_descriptor "device descriptor",<br>
 		 * this bDeviceClass value indicates that each interface specifies its<br>
 		 * own class information and all interfaces operate independently.<br>
-		 * <i>native declaration : /usr/include/limits.h:44</i>
+		 * <i>native declaration : /usr/include/limits.h:151</i>
 		 */
 		public static final int LIBUSB_CLASS_PER_INTERFACE = 0;
 		/**
 		 * Audio class<br>
 		 * Audio class<br>
-		 * <i>native declaration : /usr/include/limits.h:47</i>
+		 * <i>native declaration : /usr/include/limits.h:154</i>
 		 */
 		public static final int LIBUSB_CLASS_AUDIO = 1;
 		/**
 		 * Communications class<br>
 		 * Communications class<br>
-		 * <i>native declaration : /usr/include/limits.h:50</i>
+		 * <i>native declaration : /usr/include/limits.h:157</i>
 		 */
 		public static final int LIBUSB_CLASS_COMM = 2;
 		/**
 		 * Human Interface Device class<br>
 		 * Human Interface Device class<br>
-		 * <i>native declaration : /usr/include/limits.h:53</i>
+		 * <i>native declaration : /usr/include/limits.h:160</i>
 		 */
 		public static final int LIBUSB_CLASS_HID = 3;
 		/**
 		 * Printer dclass<br>
 		 * Printer dclass<br>
-		 * <i>native declaration : /usr/include/limits.h:56</i>
+		 * <i>native declaration : /usr/include/limits.h:163</i>
 		 */
 		public static final int LIBUSB_CLASS_PRINTER = 7;
 		/**
 		 * Picture transfer protocol class<br>
 		 * Picture transfer protocol class<br>
-		 * <i>native declaration : /usr/include/limits.h:59</i>
+		 * <i>native declaration : /usr/include/limits.h:166</i>
 		 */
 		public static final int LIBUSB_CLASS_PTP = 6;
 		/**
 		 * Mass storage class<br>
 		 * Mass storage class<br>
-		 * <i>native declaration : /usr/include/limits.h:62</i>
+		 * <i>native declaration : /usr/include/limits.h:169</i>
 		 */
 		public static final int LIBUSB_CLASS_MASS_STORAGE = 8;
 		/**
 		 * Hub class<br>
 		 * Hub class<br>
-		 * <i>native declaration : /usr/include/limits.h:65</i>
+		 * <i>native declaration : /usr/include/limits.h:172</i>
 		 */
 		public static final int LIBUSB_CLASS_HUB = 9;
 		/**
 		 * Data class<br>
 		 * Data class<br>
-		 * <i>native declaration : /usr/include/limits.h:68</i>
+		 * <i>native declaration : /usr/include/limits.h:175</i>
 		 */
 		public static final int LIBUSB_CLASS_DATA = 10;
 		/**
 		 * Class is vendor-specific<br>
 		 * Class is vendor-specific<br>
-		 * <i>native declaration : /usr/include/limits.h:71</i>
+		 * <i>native declaration : /usr/include/limits.h:178</i>
 		 */
 		public static final int LIBUSB_CLASS_VENDOR_SPEC = 255;
 	}
 	/**
 	 * \ingroup desc<br>
 	 * Descriptor types as defined by the USB specification.<br>
-	 * <i>native declaration : /usr/include/limits.h:76</i><br>
+	 * <i>native declaration : /usr/include/limits.h:183</i><br>
 	 * enum values
 	 */
 	public static interface libusb_descriptor_type {
 		/**
 		 * Device descriptor. See libusb_device_descriptor.<br>
 		 * Device descriptor. See libusb_device_descriptor.<br>
-		 * <i>native declaration : /usr/include/limits.h:78</i>
+		 * <i>native declaration : /usr/include/limits.h:185</i>
 		 */
 		public static final int LIBUSB_DT_DEVICE = 1;
 		/**
 		 * Configuration descriptor. See libusb_config_descriptor.<br>
 		 * Configuration descriptor. See libusb_config_descriptor.<br>
-		 * <i>native declaration : /usr/include/limits.h:81</i>
+		 * <i>native declaration : /usr/include/limits.h:188</i>
 		 */
 		public static final int LIBUSB_DT_CONFIG = 2;
 		/**
 		 * String descriptor<br>
 		 * String descriptor<br>
-		 * <i>native declaration : /usr/include/limits.h:84</i>
+		 * <i>native declaration : /usr/include/limits.h:191</i>
 		 */
 		public static final int LIBUSB_DT_STRING = 3;
 		/**
 		 * Interface descriptor. See libusb_interface_descriptor.<br>
 		 * Interface descriptor. See libusb_interface_descriptor.<br>
-		 * <i>native declaration : /usr/include/limits.h:87</i>
+		 * <i>native declaration : /usr/include/limits.h:194</i>
 		 */
 		public static final int LIBUSB_DT_INTERFACE = 4;
 		/**
 		 * Endpoint descriptor. See libusb_endpoint_descriptor.<br>
 		 * Endpoint descriptor. See libusb_endpoint_descriptor.<br>
-		 * <i>native declaration : /usr/include/limits.h:90</i>
+		 * <i>native declaration : /usr/include/limits.h:197</i>
 		 */
 		public static final int LIBUSB_DT_ENDPOINT = 5;
 		/**
 		 * HID descriptor<br>
 		 * HID descriptor<br>
-		 * <i>native declaration : /usr/include/limits.h:93</i>
+		 * <i>native declaration : /usr/include/limits.h:200</i>
 		 */
 		public static final int LIBUSB_DT_HID = 33;
 		/**
 		 * HID report descriptor<br>
 		 * HID report descriptor<br>
-		 * <i>native declaration : /usr/include/limits.h:96</i>
+		 * <i>native declaration : /usr/include/limits.h:203</i>
 		 */
 		public static final int LIBUSB_DT_REPORT = 34;
 		/**
 		 * Physical descriptor<br>
 		 * Physical descriptor<br>
-		 * <i>native declaration : /usr/include/limits.h:99</i>
+		 * <i>native declaration : /usr/include/limits.h:206</i>
 		 */
 		public static final int LIBUSB_DT_PHYSICAL = 35;
 		/**
 		 * Hub descriptor<br>
 		 * Hub descriptor<br>
-		 * <i>native declaration : /usr/include/limits.h:102</i>
+		 * <i>native declaration : /usr/include/limits.h:209</i>
 		 */
 		public static final int LIBUSB_DT_HUB = 41;
 	}
@@ -153,20 +174,20 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 	 * \ingroup desc<br>
 	 * Endpoint direction. Values for bit 7 of the<br>
 	 * \ref libusb_endpoint_descriptor::bEndpointAddress "endpoint address" scheme.<br>
-	 * <i>native declaration : /usr/include/limits.h:120</i><br>
+	 * <i>native declaration : /usr/include/limits.h:227</i><br>
 	 * enum values
 	 */
 	public static interface libusb_endpoint_direction {
 		/**
 		 * In: device-to-host<br>
 		 * In: device-to-host<br>
-		 * <i>native declaration : /usr/include/limits.h:122</i>
+		 * <i>native declaration : /usr/include/limits.h:229</i>
 		 */
 		public static final int LIBUSB_ENDPOINT_IN = 128;
 		/**
 		 * Out: host-to-device<br>
 		 * Out: host-to-device<br>
-		 * <i>native declaration : /usr/include/limits.h:125</i>
+		 * <i>native declaration : /usr/include/limits.h:232</i>
 		 */
 		public static final int LIBUSB_ENDPOINT_OUT = 0;
 	}
@@ -174,106 +195,106 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 	 * \ingroup desc<br>
 	 * Endpoint transfer type. Values for bits 0:1 of the<br>
 	 * \ref libusb_endpoint_descriptor::bmAttributes "endpoint attributes" field.<br>
-	 * <i>native declaration : /usr/include/limits.h:134</i><br>
+	 * <i>native declaration : /usr/include/limits.h:241</i><br>
 	 * enum values
 	 */
 	public static interface libusb_transfer_type {
 		/**
 		 * Control endpoint<br>
 		 * Control endpoint<br>
-		 * <i>native declaration : /usr/include/limits.h:136</i>
+		 * <i>native declaration : /usr/include/limits.h:243</i>
 		 */
 		public static final int LIBUSB_TRANSFER_TYPE_CONTROL = 0;
 		/**
 		 * Isochronous endpoint<br>
 		 * Isochronous endpoint<br>
-		 * <i>native declaration : /usr/include/limits.h:139</i>
+		 * <i>native declaration : /usr/include/limits.h:246</i>
 		 */
 		public static final int LIBUSB_TRANSFER_TYPE_ISOCHRONOUS = 1;
 		/**
 		 * Bulk endpoint<br>
 		 * Bulk endpoint<br>
-		 * <i>native declaration : /usr/include/limits.h:142</i>
+		 * <i>native declaration : /usr/include/limits.h:249</i>
 		 */
 		public static final int LIBUSB_TRANSFER_TYPE_BULK = 2;
 		/**
 		 * Interrupt endpoint<br>
 		 * Interrupt endpoint<br>
-		 * <i>native declaration : /usr/include/limits.h:145</i>
+		 * <i>native declaration : /usr/include/limits.h:252</i>
 		 */
 		public static final int LIBUSB_TRANSFER_TYPE_INTERRUPT = 3;
 	}
 	/**
 	 * \ingroup misc<br>
 	 * Standard requests, as defined in table 9-3 of the USB2 specifications<br>
-	 * <i>native declaration : /usr/include/limits.h:150</i><br>
+	 * <i>native declaration : /usr/include/limits.h:257</i><br>
 	 * enum values
 	 */
 	public static interface libusb_standard_request {
 		/**
 		 * Request status of the specific recipient<br>
 		 * Request status of the specific recipient<br>
-		 * <i>native declaration : /usr/include/limits.h:152</i>
+		 * <i>native declaration : /usr/include/limits.h:259</i>
 		 */
 		public static final int LIBUSB_REQUEST_GET_STATUS = 0;
 		/**
 		 * Clear or disable a specific feature<br>
 		 * Clear or disable a specific feature<br>
-		 * <i>native declaration : /usr/include/limits.h:155</i>
+		 * <i>native declaration : /usr/include/limits.h:262</i>
 		 */
 		public static final int LIBUSB_REQUEST_CLEAR_FEATURE = 1;
 		/**
 		 * Set or enable a specific feature<br>
 		 * Set or enable a specific feature<br>
-		 * <i>native declaration : /usr/include/limits.h:160</i>
+		 * <i>native declaration : /usr/include/limits.h:267</i>
 		 */
 		public static final int LIBUSB_REQUEST_SET_FEATURE = 3;
 		/**
 		 * Set device address for all future accesses<br>
 		 * Set device address for all future accesses<br>
-		 * <i>native declaration : /usr/include/limits.h:165</i>
+		 * <i>native declaration : /usr/include/limits.h:272</i>
 		 */
 		public static final int LIBUSB_REQUEST_SET_ADDRESS = 5;
 		/**
 		 * Get the specified descriptor<br>
 		 * Get the specified descriptor<br>
-		 * <i>native declaration : /usr/include/limits.h:168</i>
+		 * <i>native declaration : /usr/include/limits.h:275</i>
 		 */
 		public static final int LIBUSB_REQUEST_GET_DESCRIPTOR = 6;
 		/**
 		 * Used to update existing descriptors or add new descriptors<br>
 		 * Used to update existing descriptors or add new descriptors<br>
-		 * <i>native declaration : /usr/include/limits.h:171</i>
+		 * <i>native declaration : /usr/include/limits.h:278</i>
 		 */
 		public static final int LIBUSB_REQUEST_SET_DESCRIPTOR = 7;
 		/**
 		 * Get the current device configuration value<br>
 		 * Get the current device configuration value<br>
-		 * <i>native declaration : /usr/include/limits.h:174</i>
+		 * <i>native declaration : /usr/include/limits.h:281</i>
 		 */
 		public static final int LIBUSB_REQUEST_GET_CONFIGURATION = 8;
 		/**
 		 * Set device configuration<br>
 		 * Set device configuration<br>
-		 * <i>native declaration : /usr/include/limits.h:177</i>
+		 * <i>native declaration : /usr/include/limits.h:284</i>
 		 */
 		public static final int LIBUSB_REQUEST_SET_CONFIGURATION = 9;
 		/**
 		 * Return the selected alternate setting for the specified interface<br>
 		 * Return the selected alternate setting for the specified interface<br>
-		 * <i>native declaration : /usr/include/limits.h:180</i>
+		 * <i>native declaration : /usr/include/limits.h:287</i>
 		 */
 		public static final int LIBUSB_REQUEST_GET_INTERFACE = 10;
 		/**
 		 * Select an alternate interface for the specified interface<br>
 		 * Select an alternate interface for the specified interface<br>
-		 * <i>native declaration : /usr/include/limits.h:183</i>
+		 * <i>native declaration : /usr/include/limits.h:290</i>
 		 */
 		public static final int LIBUSB_REQUEST_SET_INTERFACE = 11;
 		/**
 		 * Set then report an endpoint's synchronization frame<br>
 		 * Set then report an endpoint's synchronization frame<br>
-		 * <i>native declaration : /usr/include/limits.h:186</i>
+		 * <i>native declaration : /usr/include/limits.h:293</i>
 		 */
 		public static final int LIBUSB_REQUEST_SYNCH_FRAME = 12;
 	}
@@ -282,32 +303,32 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 	 * Request type bits of the<br>
 	 * \ref libusb_control_setup::bmRequestType "bmRequestType" field in control<br>
 	 * transfers.<br>
-	 * <i>native declaration : /usr/include/limits.h:193</i><br>
+	 * <i>native declaration : /usr/include/limits.h:300</i><br>
 	 * enum values
 	 */
 	public static interface libusb_request_type {
 		/**
 		 * Standard<br>
 		 * Standard<br>
-		 * <i>native declaration : /usr/include/limits.h:195</i>
+		 * <i>native declaration : /usr/include/limits.h:302</i>
 		 */
 		public static final int LIBUSB_REQUEST_TYPE_STANDARD = (0 << 5);
 		/**
 		 * Class<br>
 		 * Class<br>
-		 * <i>native declaration : /usr/include/limits.h:198</i>
+		 * <i>native declaration : /usr/include/limits.h:305</i>
 		 */
 		public static final int LIBUSB_REQUEST_TYPE_CLASS = (1 << 5);
 		/**
 		 * Vendor<br>
 		 * Vendor<br>
-		 * <i>native declaration : /usr/include/limits.h:201</i>
+		 * <i>native declaration : /usr/include/limits.h:308</i>
 		 */
 		public static final int LIBUSB_REQUEST_TYPE_VENDOR = (2 << 5);
 		/**
 		 * Reserved<br>
 		 * Reserved<br>
-		 * <i>native declaration : /usr/include/limits.h:204</i>
+		 * <i>native declaration : /usr/include/limits.h:311</i>
 		 */
 		public static final int LIBUSB_REQUEST_TYPE_RESERVED = (3 << 5);
 	}
@@ -316,32 +337,32 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 	 * Recipient bits of the<br>
 	 * \ref libusb_control_setup::bmRequestType "bmRequestType" field in control<br>
 	 * transfers. Values 4 through 31 are reserved.<br>
-	 * <i>native declaration : /usr/include/limits.h:211</i><br>
+	 * <i>native declaration : /usr/include/limits.h:318</i><br>
 	 * enum values
 	 */
 	public static interface libusb_request_recipient {
 		/**
 		 * Device<br>
 		 * Device<br>
-		 * <i>native declaration : /usr/include/limits.h:213</i>
+		 * <i>native declaration : /usr/include/limits.h:320</i>
 		 */
 		public static final int LIBUSB_RECIPIENT_DEVICE = 0;
 		/**
 		 * Interface<br>
 		 * Interface<br>
-		 * <i>native declaration : /usr/include/limits.h:216</i>
+		 * <i>native declaration : /usr/include/limits.h:323</i>
 		 */
 		public static final int LIBUSB_RECIPIENT_INTERFACE = 1;
 		/**
 		 * Endpoint<br>
 		 * Endpoint<br>
-		 * <i>native declaration : /usr/include/limits.h:219</i>
+		 * <i>native declaration : /usr/include/limits.h:326</i>
 		 */
 		public static final int LIBUSB_RECIPIENT_ENDPOINT = 2;
 		/**
 		 * Other<br>
 		 * Other<br>
-		 * <i>native declaration : /usr/include/limits.h:222</i>
+		 * <i>native declaration : /usr/include/limits.h:329</i>
 		 */
 		public static final int LIBUSB_RECIPIENT_OTHER = 3;
 	}
@@ -350,32 +371,32 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 	 * Synchronization type for isochronous endpoints. Values for bits 2:3 of the<br>
 	 * \ref libusb_endpoint_descriptor::bmAttributes "bmAttributes" field in<br>
 	 * libusb_endpoint_descriptor.<br>
-	 * <i>native declaration : /usr/include/limits.h:232</i><br>
+	 * <i>native declaration : /usr/include/limits.h:339</i><br>
 	 * enum values
 	 */
 	public static interface libusb_iso_sync_type {
 		/**
 		 * No synchronization<br>
 		 * No synchronization<br>
-		 * <i>native declaration : /usr/include/limits.h:234</i>
+		 * <i>native declaration : /usr/include/limits.h:341</i>
 		 */
 		public static final int LIBUSB_ISO_SYNC_TYPE_NONE = 0;
 		/**
 		 * Asynchronous<br>
 		 * Asynchronous<br>
-		 * <i>native declaration : /usr/include/limits.h:237</i>
+		 * <i>native declaration : /usr/include/limits.h:344</i>
 		 */
 		public static final int LIBUSB_ISO_SYNC_TYPE_ASYNC = 1;
 		/**
 		 * Adaptive<br>
 		 * Adaptive<br>
-		 * <i>native declaration : /usr/include/limits.h:240</i>
+		 * <i>native declaration : /usr/include/limits.h:347</i>
 		 */
 		public static final int LIBUSB_ISO_SYNC_TYPE_ADAPTIVE = 2;
 		/**
 		 * Synchronous<br>
 		 * Synchronous<br>
-		 * <i>native declaration : /usr/include/limits.h:243</i>
+		 * <i>native declaration : /usr/include/limits.h:350</i>
 		 */
 		public static final int LIBUSB_ISO_SYNC_TYPE_SYNC = 3;
 	}
@@ -384,26 +405,26 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 	 * Usage type for isochronous endpoints. Values for bits 4:5 of the<br>
 	 * \ref libusb_endpoint_descriptor::bmAttributes "bmAttributes" field in<br>
 	 * libusb_endpoint_descriptor.<br>
-	 * <i>native declaration : /usr/include/limits.h:253</i><br>
+	 * <i>native declaration : /usr/include/limits.h:360</i><br>
 	 * enum values
 	 */
 	public static interface libusb_iso_usage_type {
 		/**
 		 * Data endpoint<br>
 		 * Data endpoint<br>
-		 * <i>native declaration : /usr/include/limits.h:255</i>
+		 * <i>native declaration : /usr/include/limits.h:362</i>
 		 */
 		public static final int LIBUSB_ISO_USAGE_TYPE_DATA = 0;
 		/**
 		 * Feedback endpoint<br>
 		 * Feedback endpoint<br>
-		 * <i>native declaration : /usr/include/limits.h:258</i>
+		 * <i>native declaration : /usr/include/limits.h:365</i>
 		 */
 		public static final int LIBUSB_ISO_USAGE_TYPE_FEEDBACK = 1;
 		/**
 		 * Implicit feedback Data endpoint<br>
 		 * Implicit feedback Data endpoint<br>
-		 * <i>native declaration : /usr/include/limits.h:261</i>
+		 * <i>native declaration : /usr/include/limits.h:368</i>
 		 */
 		public static final int LIBUSB_ISO_USAGE_TYPE_IMPLICIT = 2;
 	}
@@ -411,99 +432,99 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 	 * \ingroup misc<br>
 	 * Error codes. Most libusb functions return 0 on success or one of these<br>
 	 * codes on failure.<br>
-	 * <i>native declaration : /usr/include/limits.h:563</i><br>
+	 * <i>native declaration : /usr/include/limits.h:670</i><br>
 	 * enum values
 	 */
 	public static interface libusb_error {
 		/**
 		 * Success (no error)<br>
 		 * Success (no error)<br>
-		 * <i>native declaration : /usr/include/limits.h:565</i>
+		 * <i>native declaration : /usr/include/limits.h:672</i>
 		 */
 		public static final int LIBUSB_SUCCESS = 0;
 		/**
 		 * Input/output error<br>
 		 * Input/output error<br>
-		 * <i>native declaration : /usr/include/limits.h:568</i>
+		 * <i>native declaration : /usr/include/limits.h:675</i>
 		 */
 		public static final int LIBUSB_ERROR_IO = -1;
 		/**
 		 * Invalid parameter<br>
 		 * Invalid parameter<br>
-		 * <i>native declaration : /usr/include/limits.h:571</i>
+		 * <i>native declaration : /usr/include/limits.h:678</i>
 		 */
 		public static final int LIBUSB_ERROR_INVALID_PARAM = -2;
 		/**
 		 * Access denied (insufficient permissions)<br>
 		 * Access denied (insufficient permissions)<br>
-		 * <i>native declaration : /usr/include/limits.h:574</i>
+		 * <i>native declaration : /usr/include/limits.h:681</i>
 		 */
 		public static final int LIBUSB_ERROR_ACCESS = -3;
 		/**
 		 * No such device (it may have been disconnected)<br>
 		 * No such device (it may have been disconnected)<br>
-		 * <i>native declaration : /usr/include/limits.h:577</i>
+		 * <i>native declaration : /usr/include/limits.h:684</i>
 		 */
 		public static final int LIBUSB_ERROR_NO_DEVICE = -4;
 		/**
 		 * Entity not found<br>
 		 * Entity not found<br>
-		 * <i>native declaration : /usr/include/limits.h:580</i>
+		 * <i>native declaration : /usr/include/limits.h:687</i>
 		 */
 		public static final int LIBUSB_ERROR_NOT_FOUND = -5;
 		/**
 		 * Resource busy<br>
 		 * Resource busy<br>
-		 * <i>native declaration : /usr/include/limits.h:583</i>
+		 * <i>native declaration : /usr/include/limits.h:690</i>
 		 */
 		public static final int LIBUSB_ERROR_BUSY = -6;
 		/**
 		 * Operation timed out<br>
 		 * Operation timed out<br>
-		 * <i>native declaration : /usr/include/limits.h:586</i>
+		 * <i>native declaration : /usr/include/limits.h:693</i>
 		 */
 		public static final int LIBUSB_ERROR_TIMEOUT = -7;
 		/**
 		 * Overflow<br>
 		 * Overflow<br>
-		 * <i>native declaration : /usr/include/limits.h:589</i>
+		 * <i>native declaration : /usr/include/limits.h:696</i>
 		 */
 		public static final int LIBUSB_ERROR_OVERFLOW = -8;
 		/**
 		 * Pipe error<br>
 		 * Pipe error<br>
-		 * <i>native declaration : /usr/include/limits.h:592</i>
+		 * <i>native declaration : /usr/include/limits.h:699</i>
 		 */
 		public static final int LIBUSB_ERROR_PIPE = -9;
 		/**
 		 * System call interrupted (perhaps due to signal)<br>
 		 * System call interrupted (perhaps due to signal)<br>
-		 * <i>native declaration : /usr/include/limits.h:595</i>
+		 * <i>native declaration : /usr/include/limits.h:702</i>
 		 */
 		public static final int LIBUSB_ERROR_INTERRUPTED = -10;
 		/**
 		 * Insufficient memory<br>
 		 * Insufficient memory<br>
-		 * <i>native declaration : /usr/include/limits.h:598</i>
+		 * <i>native declaration : /usr/include/limits.h:705</i>
 		 */
 		public static final int LIBUSB_ERROR_NO_MEM = -11;
 		/**
 		 * Operation not supported or unimplemented on this platform<br>
 		 * Operation not supported or unimplemented on this platform<br>
-		 * <i>native declaration : /usr/include/limits.h:601</i>
+		 * <i>native declaration : /usr/include/limits.h:708</i>
 		 */
 		public static final int LIBUSB_ERROR_NOT_SUPPORTED = -12;
 		/**
 		 * Other error<br>
 		 * Other error<br>
-		 * <i>native declaration : /usr/include/limits.h:604</i>
+		 * <i>native declaration : /usr/include/limits.h:711</i>
 		 */
 		public static final int LIBUSB_ERROR_OTHER = -99;
 	}
 	/**
 	 * \ingroup asyncio<br>
 	 * Transfer status codes<br>
-	 * <i>native declaration : /usr/include/limits.h:609</i><br>
+	 * <i>native declaration : /usr/include/limits.h:716</i><br>
 	 * enum values
 	 */
 	public static interface libusb_transfer_status {
@@ -512,25 +533,25 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 		 * that the entire amount of requested data was transferred.<br>
 		 * Transfer completed without error. Note that this does not indicate<br>
 		 * that the entire amount of requested data was transferred.<br>
-		 * <i>native declaration : /usr/include/limits.h:612</i>
+		 * <i>native declaration : /usr/include/limits.h:719</i>
 		 */
 		public static final int LIBUSB_TRANSFER_COMPLETED = 0;
 		/**
 		 * Transfer failed<br>
 		 * Transfer failed<br>
-		 * <i>native declaration : /usr/include/limits.h:615</i>
+		 * <i>native declaration : /usr/include/limits.h:722</i>
 		 */
 		public static final int LIBUSB_TRANSFER_ERROR = 1;
 		/**
 		 * Transfer timed out<br>
 		 * Transfer timed out<br>
-		 * <i>native declaration : /usr/include/limits.h:618</i>
+		 * <i>native declaration : /usr/include/limits.h:725</i>
 		 */
 		public static final int LIBUSB_TRANSFER_TIMED_OUT = 2;
 		/**
 		 * Transfer was cancelled<br>
 		 * Transfer was cancelled<br>
-		 * <i>native declaration : /usr/include/limits.h:621</i>
+		 * <i>native declaration : /usr/include/limits.h:728</i>
 		 */
 		public static final int LIBUSB_TRANSFER_CANCELLED = 3;
 		/**
@@ -538,39 +559,39 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 		 * stalled). For control endpoints: control request not supported.<br>
 		 * For bulk/interrupt endpoints: halt condition detected (endpoint<br>
 		 * stalled). For control endpoints: control request not supported.<br>
-		 * <i>native declaration : /usr/include/limits.h:625</i>
+		 * <i>native declaration : /usr/include/limits.h:732</i>
 		 */
 		public static final int LIBUSB_TRANSFER_STALL = 4;
 		/**
 		 * Device was disconnected<br>
 		 * Device was disconnected<br>
-		 * <i>native declaration : /usr/include/limits.h:628</i>
+		 * <i>native declaration : /usr/include/limits.h:735</i>
 		 */
 		public static final int LIBUSB_TRANSFER_NO_DEVICE = 5;
 		/**
 		 * Device sent more data than requested<br>
 		 * Device sent more data than requested<br>
-		 * <i>native declaration : /usr/include/limits.h:631</i>
+		 * <i>native declaration : /usr/include/limits.h:738</i>
 		 */
 		public static final int LIBUSB_TRANSFER_OVERFLOW = 6;
 	}
 	/**
 	 * \ingroup asyncio<br>
 	 * libusb_transfer.flags values<br>
-	 * <i>native declaration : /usr/include/limits.h:636</i><br>
+	 * <i>native declaration : /usr/include/limits.h:743</i><br>
 	 * enum values
 	 */
 	public static interface libusb_transfer_flags {
 		/**
 		 * Report short frames as errors<br>
 		 * Report short frames as errors<br>
-		 * <i>native declaration : /usr/include/limits.h:638</i>
+		 * <i>native declaration : /usr/include/limits.h:745</i>
 		 */
 		public static final int LIBUSB_TRANSFER_SHORT_NOT_OK = 1 << 0;
 		/**
 		 * Automatically free() transfer buffer during libusb_free_transfer()<br>
 		 * Automatically free() transfer buffer during libusb_free_transfer()<br>
-		 * <i>native declaration : /usr/include/limits.h:641</i>
+		 * <i>native declaration : /usr/include/limits.h:748</i>
 		 */
 		public static final int LIBUSB_TRANSFER_FREE_BUFFER = 1 << 1;
 		/**
@@ -582,21 +603,339 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 		 * If this flag is set, it is illegal to call libusb_free_transfer()<br>
 		 * from your transfer callback, as this will result in a double-free<br>
 		 * when this flag is acted upon.<br>
-		 * <i>native declaration : /usr/include/limits.h:647</i>
+		 * <i>native declaration : /usr/include/limits.h:754</i>
 		 */
 		public static final int LIBUSB_TRANSFER_FREE_TRANSFER = 1 << 2;
 	}
-	public static final int LIBUSB_ISO_SYNC_TYPE_MASK = 12;
-	public static final int LIBUSB_ISO_USAGE_TYPE_MASK = 48;
-	public static final int LIBUSB_DT_DEVICE_SIZE = 18;
-	public static final int LIBUSB_DT_CONFIG_SIZE = 9;
-	public static final int LIBUSB_ENDPOINT_ADDRESS_MASK = 15;
+	/// <i>native declaration : /usr/include/linux/limits.h</i>
+	public static final int XATTR_SIZE_MAX = 65536;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int _POSIX2_CHARCLASS_NAME_MAX = 14;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int _POSIX2_RE_DUP_MAX = 255;
+	/// <i>native declaration : /usr/include/linux/limits.h</i>
+	public static final int NAME_MAX = 255;
+	/// <i>native declaration : /usr/include/bits/pthreadtypes.h</i>
+	public static final int __SIZEOF_PTHREAD_MUTEX_T = 24;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_XOPEN2K = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_CLOCKRES_MIN = 20000000;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int _POSIX2_BC_SCALE_MAX = 99;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __GLIBC_MINOR__ = 10;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __GLIBC_HAVE_LONG_LONG = 1;
+	/// <i>native declaration : /usr/include/linux/limits.h</i>
+	public static final int RTSIG_MAX = 32;
 	public static final int LIBUSB_TRANSFER_TYPE_MASK = 3;
-	public static final int LIBUSB_DT_ENDPOINT_AUDIO_SIZE = 9;
-	public static final int LIBUSB_ENDPOINT_DIR_MASK = 128;
-	public static final int LIBUSB_DT_ENDPOINT_SIZE = 7;
-	public static final int LIBUSB_DT_HUB_NONVAR_SIZE = 7;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_CHILD_MAX = 25;
+	/// <i>native declaration : /usr/include/endian.h</i>
+	public static final int _ENDIAN_H = 1;
+	/// <i>native declaration : /usr/include/bits/pthreadtypes.h</i>
+	public static final int __SIZEOF_PTHREAD_RWLOCKATTR_T = 8;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int SCHAR_MAX = 127;
+	/// <i>native declaration : /usr/include/bits/pthreadtypes.h</i>
+	public static final int __SIZEOF_PTHREAD_COND_T = 48;
+	/// <i>native declaration : /usr/include/bits/pthreadtypes.h</i>
+	public static final int __SIZEOF_PTHREAD_ATTR_T = 36;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int COLL_WEIGHTS_MAX = 255;
+	/// <i>native declaration : /usr/include/linux/limits.h</i>
+	public static final int XATTR_NAME_MAX = 255;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_MAX_CANON = 255;
+	/// <i>native declaration : /usr/include/bits/pthreadtypes.h</i>
+	public static final int __SIZEOF_PTHREAD_BARRIERATTR_T = 4;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int SHRT_MIN = (-32768);
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int _POSIX2_COLL_WEIGHTS_MAX = 2;
+	/// <i>native declaration : /usr/include/linux/limits.h</i>
+	public static final int PIPE_BUF = 4096;
+	/// <i>native declaration : /usr/include/bits/wordsize.h</i>
+	public static final int __WORDSIZE = 32;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int _FEATURES_H = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_PATH_MAX = 256;
+	/// <i>native declaration : /usr/include/time.h</i>
+	public static final int __time_t_defined = 1;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int AIO_PRIO_DELTA_MAX = 20;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_POSIX2 = 1;
 	public static final int LIBUSB_DT_INTERFACE_SIZE = 9;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_SYMLINK_MAX = 255;
+	/// <i>native declaration : /usr/include/bits/predefs.h</i>
+	public static final int __STDC_IEC_559__ = 1;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int SEM_VALUE_MAX = (2147483647);
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_XOPEN2K8 = 1;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int CHAR_BIT = 8;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int MQ_PRIO_MAX = 32768;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_ATFILE = 1;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_FORTIFY_LEVEL = 0;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __GLIBC__ = 2;
+	/// <i>native declaration : /usr/include/bits/time.h</i>
+	public static final int _STRUCT_TIMEVAL = 1;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int MB_LEN_MAX = 16;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_DELAYTIMER_MAX = 32;
+	/// <i>native declaration : /usr/include/bits/wchar.h</i>
+	public static final int _BITS_WCHAR_H = 1;
+	public static final int LIBUSB_ISO_USAGE_TYPE_MASK = 48;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int PTHREAD_STACK_MIN = 16384;
+	/// <i>native declaration : /usr/include/endian.h</i>
+	public static final int __BIG_ENDIAN = 4321;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int ULLONG_MAX = -1;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int _POSIX2_BC_STRING_MAX = 1000;
+	/// <i>native declaration : /usr/include/stdint.h</i>
+	public static final int _STDINT_H = 1;
+	public static final int LIBUSB_DT_DEVICE_SIZE = 18;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_SYMLOOP_MAX = 8;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int _POSIX2_EXPR_NEST_MAX = 32;
+	/// <i>native declaration : /usr/include/bits/pthreadtypes.h</i>
+	public static final int __SIZEOF_PTHREAD_RWLOCK_T = 32;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_HOST_NAME_MAX = 255;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_POSIX199309 = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_MAX_INPUT = 255;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_POSIX199506 = 1;
+	/// <i>native declaration : /usr/include/linux/limits.h</i>
+	public static final int NGROUPS_MAX = 65536;
+	/// <i>native declaration : /usr/include/bits/pthreadtypes.h</i>
+	public static final int _BITS_PTHREADTYPES_H = 1;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_POSIX_IMPLICITLY = 1;
+	/// <i>native declaration : /usr/include/bits/pthreadtypes.h</i>
+	public static final int __SIZEOF_PTHREAD_MUTEXATTR_T = 4;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_TIMER_MAX = 32;
+	/// <i>native declaration : /usr/include/linux/limits.h</i>
+	public static final int MAX_INPUT = 255;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_BSD = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_SEM_VALUE_MAX = 32767;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_MISC = 1;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int HOST_NAME_MAX = 64;
+	public static final int LIBUSB_ENDPOINT_ADDRESS_MASK = 15;
+	/// <i>native declaration : /usr/include/bits/pthreadtypes.h</i>
+	public static final int __SIZEOF_PTHREAD_BARRIER_T = 20;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __GNU_LIBRARY__ = 6;
+	/// <i>native declaration : /usr/include/bits/byteswap.h</i>
+	public static final int _BITS_BYTESWAP_H = 1;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_ANSI = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_NGROUPS_MAX = 8;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int _LIBC_LIMITS_H_ = 1;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final long UINT_MAX = 4294967295L;
+	/// <i>native declaration : /usr/include/sys/types.h</i>
+	public static final int _SYS_TYPES_H = 1;
+	public static final int LIBUSB_ISO_SYNC_TYPE_MASK = 12;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int _SVID_SOURCE = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_PIPE_BUF = 512;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int SCHAR_MIN = (-128);
+	/// <i>native declaration : /usr/include/bits/wchar.h</i>
+	public static final int __WCHAR_MAX = (2147483647);
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int CHARCLASS_NAME_MAX = 2048;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_RTSIG_MAX = 8;
+	/// <i>native declaration : /usr/include/sys/select.h</i>
+	public static final int _SYS_SELECT_H = 1;
+	/// <i>native declaration : /usr/include/sys/types.h</i>
+	public static final int __BIT_TYPES_DEFINED__ = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_OPEN_MAX = 20;
+	public static final int LIBUSB_DT_ENDPOINT_AUDIO_SIZE = 9;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int RE_DUP_MAX = (32767);
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _BITS_POSIX1_LIM_H = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_LINK_MAX = 8;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int DELAYTIMER_MAX = 2147483647;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final long ULONG_MAX = 4294967295L;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_SIGQUEUE_MAX = 32;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int _BSD_SOURCE = 1;
+	/// <i>native declaration : /usr/include/linux/limits.h</i>
+	public static final int XATTR_LIST_MAX = 65536;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int USHRT_MAX = 65535;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_POSIX = 1;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final long LLONG_MAX = 9223372036854775807L;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int SHRT_MAX = 32767;
+	/// <i>native declaration : /usr/include/bits/sigset.h</i>
+	public static final int _SIGSET_H_types = 1;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_SVID = 1;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int TTY_NAME_MAX = 32;
+	/// <i>native declaration : /usr/include/endian.h</i>
+	public static final int __LITTLE_ENDIAN = 1234;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int _BITS_POSIX2_LIM_H = 1;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int LOGIN_NAME_MAX = 256;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_LOGIN_NAME_MAX = 9;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __USE_ISOC99 = 1;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int _POSIX2_BC_BASE_MAX = 99;
+	public static final int LIBUSB_ENDPOINT_DIR_MASK = 128;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_TTY_NAME_MAX = 9;
+	public static final int LIBUSB_DT_ENDPOINT_SIZE = 7;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int _POSIX_SOURCE = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_MQ_OPEN_MAX = 8;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_RE_DUP_MAX = 255;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int _POSIX_THREAD_DESTRUCTOR_ITERATIONS = 4;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int PTHREAD_KEYS_MAX = 1024;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_SEM_NSEMS_MAX = 256;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int _LIMITS_H = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_TZNAME_MAX = 6;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_ARG_MAX = 4096;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int __STDC_ISO_10646__ = 200009;
+	/// <i>native declaration : /usr/include/bits/pthreadtypes.h</i>
+	public static final int __SIZEOF_PTHREAD_CONDATTR_T = 4;
+	/// <i>native declaration : /usr/include/sys/sysmacros.h</i>
+	public static final int _SYS_SYSMACROS_H = 1;
+	/// <i>native declaration : /usr/include/sys/cdefs.h</i>
+	public static final int _SYS_CDEFS_H = 1;
+	/// <i>native declaration : /usr/include/bits/predefs.h</i>
+	public static final int __STDC_IEC_559_COMPLEX__ = 1;
+	public static final int LIBUSB_DT_CONFIG_SIZE = 9;
+	public static final int LIBUSB_DT_HUB_NONVAR_SIZE = 7;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int UCHAR_MAX = 255;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int INT_MAX = 2147483647;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_STREAM_MAX = 8;
+	/// <i>native declaration : /usr/include/bits/typesizes.h</i>
+	public static final int _BITS_TYPESIZES_H = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_NAME_MAX = 14;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int LONG_MAX = 2147483647;
+	/// <i>native declaration : /usr/include/sys/time.h</i>
+	public static final int _SYS_TIME_H = 1;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int _POSIX_THREAD_KEYS_MAX = 128;
+	/// <i>native declaration : /usr/include/endian.h</i>
+	public static final int __PDP_ENDIAN = 3412;
+	/// <i>native declaration : /usr/include/linux/limits.h</i>
+	public static final int MAX_CANON = 255;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int _POSIX2_LINE_MAX = 2048;
+	/// <i>native declaration : /usr/include/linux/limits.h</i>
+	public static final int PATH_MAX = 4096;
+	/// <i>native declaration : /usr/include/bits/types.h</i>
+	public static final int _BITS_TYPES_H = 1;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_MQ_PRIO_MAX = 32;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int _ATFILE_SOURCE = 1;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int _POSIX_THREAD_THREADS_MAX = 64;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_AIO_MAX = 1;
+	/// <i>native declaration : /usr/include/bits/typesizes.h</i>
+	public static final int __FD_SETSIZE = 1024;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_AIO_LISTIO_MAX = 2;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int _POSIX_SSIZE_MAX = 32767;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int _POSIX2_BC_DIM_MAX = 2048;
+	/// <i>native declaration : /usr/include/features.h</i>
+	public static final int _POSIX_C_SOURCE = 200809;
+	/// <i>native declaration : /usr/include/endian.h</i>
+	public static final int PDP_ENDIAN = libusbone.LibusboneLibrary.__PDP_ENDIAN;
+	/// <i>native declaration : /usr/include/limits.h</i>
+//	public static final long LLONG_MIN = (nulllibusbone.LibusboneLibrary.LLONG_MAX - 1L);
+	/// <i>native declaration : /usr/include/sys/select.h</i>
+	public static final int FD_SETSIZE = libusbone.LibusboneLibrary.__FD_SETSIZE;
+	/// <i>native declaration : /usr/include/bits/posix1_lim.h</i>
+	public static final int SSIZE_MAX = libusbone.LibusboneLibrary.LONG_MAX;
+	/// <i>native declaration : /usr/include/bits/wchar.h</i>
+//	public static final int __WCHAR_MIN = (nulllibusbone.LibusboneLibrary.__WCHAR_MAX - 1);
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int EXPR_NEST_MAX = libusbone.LibusboneLibrary._POSIX2_EXPR_NEST_MAX;
+	/// <i>native declaration : /usr/include/limits.h</i>
+//	public static final int LONG_MIN = (nulllibusbone.LibusboneLibrary.LONG_MAX - 1);
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int BC_STRING_MAX = libusbone.LibusboneLibrary._POSIX2_BC_STRING_MAX;
+	/// <i>native declaration : /usr/include/bits/endian.h</i>
+	public static final int __BYTE_ORDER = libusbone.LibusboneLibrary.__LITTLE_ENDIAN;
+	/// <i>native declaration : /usr/include/limits.h</i>
+//	public static final int INT_MIN = (nulllibusbone.LibusboneLibrary.INT_MAX - 1);
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int BC_DIM_MAX = libusbone.LibusboneLibrary._POSIX2_BC_DIM_MAX;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int BC_SCALE_MAX = libusbone.LibusboneLibrary._POSIX2_BC_SCALE_MAX;
+	/// <i>native declaration : /usr/include/endian.h</i>
+	public static final int LITTLE_ENDIAN = libusbone.LibusboneLibrary.__LITTLE_ENDIAN;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int BC_BASE_MAX = libusbone.LibusboneLibrary._POSIX2_BC_BASE_MAX;
+	/// <i>native declaration : /usr/include/endian.h</i>
+	public static final int BIG_ENDIAN = libusbone.LibusboneLibrary.__BIG_ENDIAN;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int CHAR_MAX = libusbone.LibusboneLibrary.SCHAR_MAX;
+	/// <i>native declaration : /usr/include/limits.h</i>
+	public static final int CHAR_MIN = libusbone.LibusboneLibrary.SCHAR_MIN;
+	/// <i>native declaration : /usr/include/bits/local_lim.h</i>
+	public static final int PTHREAD_DESTRUCTOR_ITERATIONS = libusbone.LibusboneLibrary._POSIX_THREAD_DESTRUCTOR_ITERATIONS;
+	/// <i>native declaration : /usr/include/bits/posix2_lim.h</i>
+	public static final int LINE_MAX = libusbone.LibusboneLibrary._POSIX2_LINE_MAX;
 	/**
 	 * \ingroup asyncio<br>
 	 * Asynchronous transfer callback function type. When submitting asynchronous<br>
@@ -612,197 +951,338 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 		void invoke(libusbone.libusb_transfer transfer);
 	}
 	/**
+	 * Check the first NFDS descriptors each in READFDS (if not NULL) for read<br>
+	 * readiness, in WRITEFDS (if not NULL) for write readiness, and in EXCEPTFDS<br>
+	 * (if not NULL) for exceptional conditions.  If TIMEOUT is not NULL, time out<br>
+	 * after waiting the interval specified therein.  Returns the number of ready<br>
+	 * descriptors, or -1 for errors.<br>
+	 * This function is a cancellation point and therefore not marked with<br>
+	 * __THROW.<br>
+	 * Original signature : <code>int select(int, fd_set*, fd_set*, fd_set*, timeval*)</code><br>
+	 * <i>native declaration : /usr/include/sys/select.h:102</i>
+	 */
+	int select(int __nfds, libusbone.fd_set __readfds, libusbone.fd_set __writefds, libusbone.fd_set __exceptfds, libusbone.timeval __timeout);
+	/**
+	 * Same as above only that the TIMEOUT value is given with higher<br>
+	 * resolution and a sigmask which is been set temporarily.  This version<br>
+	 * should be used.<br>
+	 * This function is a cancellation point and therefore not marked with<br>
+	 * __THROW.<br>
+	 * Original signature : <code>int pselect(int, fd_set*, fd_set*, fd_set*, timespec*, const __sigset_t*)</code><br>
+	 * <i>native declaration : /usr/include/sys/select.h:114</i>
+	 */
+	int pselect(int __nfds, libusbone.fd_set __readfds, libusbone.fd_set __writefds, libusbone.fd_set __exceptfds, libusbone.LibusboneLibrary.timespec __timeout, libusbone.__sigset_t __sigmask);
+	/**
+	 * Get the current time of day and timezone information,<br>
+	 * putting it into *TV and *TZ.  If TZ is NULL, *TZ is not filled.<br>
+	 * Returns 0 on success, -1 on errors.<br>
+	 * NOTE: This form of timezone information is obsolete.<br>
+	 * Use the functions and variables declared in <time.h> instead.<br>
+	 * Original signature : <code>int gettimeofday(timeval*, __timezone_ptr_t)</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:70</i>
+	 */
+	int gettimeofday(libusbone.timeval __tv, libusbone.timezone __tz);
+	/**
+	 * Set the current time of day and timezone information.<br>
+	 * This call is restricted to the super-user.<br>
+	 * Original signature : <code>int settimeofday(timeval*, timezone*)</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:76</i>
+	 */
+	int settimeofday(libusbone.timeval __tv, libusbone.timezone __tz);
+	/**
+	 * Adjust the current time of day by the amount in DELTA.<br>
+	 * If OLDDELTA is not NULL, it is filled in with the amount<br>
+	 * of time adjustment remaining to be done from the last `adjtime' call.<br>
+	 * This call is restricted to the super-user.<br>
+	 * Original signature : <code>int adjtime(timeval*, timeval*)</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:84</i>
+	 */
+	int adjtime(libusbone.timeval __delta, libusbone.timeval __olddelta);
+	/**
+	 * Set *VALUE to the current setting of timer WHICH.<br>
+	 * Return 0 on success, -1 on errors.<br>
+	 * Original signature : <code>int getitimer(__itimer_which_t, itimerval*)</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:124</i>
+	 */
+	int getitimer(int __which, libusbone.itimerval __value);
+	/**
+	 * Set the timer WHICH to *NEW.  If OLD is not NULL,<br>
+	 * set *OLD to the old value of timer WHICH.<br>
+	 * Returns 0 on success, -1 on errors.<br>
+	 * Original signature : <code>int setitimer(__itimer_which_t, itimerval*, itimerval*)</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:130</i>
+	 */
+	int setitimer(int __which, libusbone.itimerval __new, libusbone.itimerval __old);
+	/**
+	 * Change the access time of FILE to TVP[0] and the modification time of<br>
+	 * FILE to TVP[1].  If TVP is a null pointer, use the current time instead.<br>
+	 * Returns 0 on success, -1 on errors.<br>
+	 * Original signature : <code>int utimes(__const char*, timeval[2])</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:137</i><br>
+	 * @deprecated use the safer methods {@link #utimes(java.lang.String, libusbone.timeval[])} and {@link #utimes(com.sun.jna.Pointer, libusbone.timeval[])} instead
+	 */
+	@java.lang.Deprecated
+	int utimes(com.sun.jna.Pointer __file, com.sun.jna.Pointer __tvp);
+	/**
+	 * Change the access time of FILE to TVP[0] and the modification time of<br>
+	 * FILE to TVP[1].  If TVP is a null pointer, use the current time instead.<br>
+	 * Returns 0 on success, -1 on errors.<br>
+	 * Original signature : <code>int utimes(__const char*, timeval[2])</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:137</i>
+	 */
+	int utimes(java.lang.String __file, libusbone.timeval __tvp[]);
+	/**
+	 * Change the access time of FILE to TVP[0] and the modification time of<br>
+	 * FILE to TVP[1].  If TVP is a null pointer, use the current time instead.<br>
+	 * Returns 0 on success, -1 on errors.<br>
+	 * Original signature : <code>int utimes(__const char*, timeval[2])</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:137</i>
+	 */
+	int utimes(com.sun.jna.Pointer __file, libusbone.timeval __tvp[]);
+	/**
+	 * Same as `utimes', but does not follow symbolic links.<br>
+	 * Original signature : <code>int lutimes(__const char*, timeval[2])</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:142</i><br>
+	 * @deprecated use the safer methods {@link #lutimes(java.lang.String, libusbone.timeval[])} and {@link #lutimes(com.sun.jna.Pointer, libusbone.timeval[])} instead
+	 */
+	@java.lang.Deprecated
+	int lutimes(com.sun.jna.Pointer __file, com.sun.jna.Pointer __tvp);
+	/**
+	 * Same as `utimes', but does not follow symbolic links.<br>
+	 * Original signature : <code>int lutimes(__const char*, timeval[2])</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:142</i>
+	 */
+	int lutimes(java.lang.String __file, libusbone.timeval __tvp[]);
+	/**
+	 * Same as `utimes', but does not follow symbolic links.<br>
+	 * Original signature : <code>int lutimes(__const char*, timeval[2])</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:142</i>
+	 */
+	int lutimes(com.sun.jna.Pointer __file, libusbone.timeval __tvp[]);
+	/**
+	 * Same as `utimes', but takes an open file descriptor instead of a name.<br>
+	 * Original signature : <code>int futimes(int, timeval[2])</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:146</i><br>
+	 * @deprecated use the safer method {@link #futimes(int, libusbone.timeval[])} instead
+	 */
+	@java.lang.Deprecated
+	int futimes(int __fd, com.sun.jna.Pointer __tvp);
+	/**
+	 * Same as `utimes', but takes an open file descriptor instead of a name.<br>
+	 * Original signature : <code>int futimes(int, timeval[2])</code><br>
+	 * <i>native declaration : /usr/include/sys/time.h:146</i>
+	 */
+	int futimes(int __fd, libusbone.timeval __tvp[]);
+	/**
+	 * Original signature : <code>int gnu_dev_major(unsigned long long int)</code><br>
+	 * <i>native declaration : /usr/include/sys/sysmacros.h:30</i>
+	 */
+	int gnu_dev_major(long __dev);
+	/**
+	 * Original signature : <code>int gnu_dev_minor(unsigned long long int)</code><br>
+	 * <i>native declaration : /usr/include/sys/sysmacros.h:33</i>
+	 */
+	int gnu_dev_minor(long __dev);
+	/**
+	 * Original signature : <code>int gnu_dev_makedev(unsigned int, unsigned int)</code><br>
+	 * <i>native declaration : /usr/include/sys/sysmacros.h:36</i>
+	 */
+	long gnu_dev_makedev(int __major, int __minor);
+	/**
 	 * Original signature : <code>int libusb_init(libusb_context**)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:740</i>
+	 * <i>native declaration : /usr/include/limits.h:847</i>
 	 */
 	int libusb_init(com.sun.jna.ptr.PointerByReference ctx);
 	/**
 	 * Original signature : <code>int libusb_init(libusb_context**)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:740</i>
+	 * <i>native declaration : /usr/include/limits.h:847</i>
 	 */
 	int libusb_init(libusbone.LibusboneLibrary.libusb_context ctx[]);
 	/**
 	 * Original signature : <code>void libusb_exit(libusb_context*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:741</i>
+	 * <i>native declaration : /usr/include/limits.h:848</i>
 	 */
 	void libusb_exit(libusbone.LibusboneLibrary.libusb_context ctx);
 	/**
 	 * Original signature : <code>void libusb_set_debug(libusb_context*, int)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:742</i>
+	 * <i>native declaration : /usr/include/limits.h:849</i>
 	 */
 	void libusb_set_debug(libusbone.LibusboneLibrary.libusb_context ctx, int level);
 	/**
-	 * <i>native declaration : /usr/include/limits.h:744</i><br>
-	 * Conversion Error : ssize_t
+	 * Original signature : <code>ssize_t libusb_get_device_list(libusb_context*, libusb_device***)</code><br>
+	 * <i>native declaration : /usr/include/limits.h:851</i>
 	 */
+	int libusb_get_device_list(libusbone.LibusboneLibrary.libusb_context ctx, com.sun.jna.ptr.PointerByReference list);
 	/**
 	 * Original signature : <code>void libusb_free_device_list(libusb_device**, int)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:746</i>
+	 * <i>native declaration : /usr/include/limits.h:853</i><br>
+	 * @deprecated use the safer method {@link #libusb_free_device_list(libusbone.LibusboneLibrary.libusb_device[], int)} instead
 	 */
+	@java.lang.Deprecated
 	void libusb_free_device_list(com.sun.jna.ptr.PointerByReference list, int unref_devices);
 	/**
 	 * Original signature : <code>void libusb_free_device_list(libusb_device**, int)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:746</i>
+	 * <i>native declaration : /usr/include/limits.h:853</i>
 	 */
 	void libusb_free_device_list(libusbone.LibusboneLibrary.libusb_device list[], int unref_devices);
 	/**
 	 * Original signature : <code>libusb_device* libusb_ref_device(libusb_device*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:747</i>
+	 * <i>native declaration : /usr/include/limits.h:854</i>
 	 */
 	libusbone.LibusboneLibrary.libusb_device libusb_ref_device(libusbone.LibusboneLibrary.libusb_device dev);
 	/**
 	 * Original signature : <code>void libusb_unref_device(libusb_device*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:748</i>
+	 * <i>native declaration : /usr/include/limits.h:855</i>
 	 */
 	void libusb_unref_device(libusbone.LibusboneLibrary.libusb_device dev);
 	/**
 	 * Original signature : <code>int libusb_get_configuration(libusb_device_handle*, int*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:750</i><br>
+	 * <i>native declaration : /usr/include/limits.h:857</i><br>
 	 * @deprecated use the safer methods {@link #libusb_get_configuration(libusbone.LibusboneLibrary.libusb_device_handle, java.nio.IntBuffer)} and {@link #libusb_get_configuration(libusbone.LibusboneLibrary.libusb_device_handle, com.sun.jna.ptr.IntByReference)} instead
 	 */
 	@java.lang.Deprecated
 	int libusb_get_configuration(libusbone.LibusboneLibrary.libusb_device_handle dev, com.sun.jna.ptr.IntByReference config);
 	/**
 	 * Original signature : <code>int libusb_get_configuration(libusb_device_handle*, int*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:750</i>
+	 * <i>native declaration : /usr/include/limits.h:857</i>
 	 */
 	int libusb_get_configuration(libusbone.LibusboneLibrary.libusb_device_handle dev, java.nio.IntBuffer config);
 	/**
 	 * Original signature : <code>int libusb_get_device_descriptor(libusb_device*, libusb_device_descriptor*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:751</i>
+	 * <i>native declaration : /usr/include/limits.h:858</i>
 	 */
 	int libusb_get_device_descriptor(libusbone.LibusboneLibrary.libusb_device dev, libusbone.libusb_device_descriptor desc);
 	/**
 	 * Original signature : <code>int libusb_get_active_config_descriptor(libusb_device*, libusb_config_descriptor**)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:753</i><br>
+	 * <i>native declaration : /usr/include/limits.h:860</i><br>
 	 * @deprecated use the safer method {@link #libusb_get_active_config_descriptor(libusbone.LibusboneLibrary.libusb_device, libusbone.libusb_config_descriptor.ByReference[])} instead
 	 */
 	@java.lang.Deprecated
 	int libusb_get_active_config_descriptor(libusbone.LibusboneLibrary.libusb_device dev, com.sun.jna.ptr.PointerByReference config);
 	/**
 	 * Original signature : <code>int libusb_get_active_config_descriptor(libusb_device*, libusb_config_descriptor**)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:753</i>
+	 * <i>native declaration : /usr/include/limits.h:860</i>
 	 */
 	int libusb_get_active_config_descriptor(libusbone.LibusboneLibrary.libusb_device dev, libusbone.libusb_config_descriptor.ByReference config[]);
 	/**
 	 * Original signature : <code>int libusb_get_config_descriptor(libusb_device*, uint8_t, libusb_config_descriptor**)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:755</i><br>
+	 * <i>native declaration : /usr/include/limits.h:862</i><br>
 	 * @deprecated use the safer method {@link #libusb_get_config_descriptor(libusbone.LibusboneLibrary.libusb_device, byte, libusbone.libusb_config_descriptor.ByReference[])} instead
 	 */
 	@java.lang.Deprecated
 	int libusb_get_config_descriptor(libusbone.LibusboneLibrary.libusb_device dev, byte config_index, com.sun.jna.ptr.PointerByReference config);
 	/**
 	 * Original signature : <code>int libusb_get_config_descriptor(libusb_device*, uint8_t, libusb_config_descriptor**)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:755</i>
+	 * <i>native declaration : /usr/include/limits.h:862</i>
 	 */
 	int libusb_get_config_descriptor(libusbone.LibusboneLibrary.libusb_device dev, byte config_index, libusbone.libusb_config_descriptor.ByReference config[]);
 	/**
 	 * Original signature : <code>int libusb_get_config_descriptor_by_value(libusb_device*, uint8_t, libusb_config_descriptor**)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:757</i><br>
+	 * <i>native declaration : /usr/include/limits.h:864</i><br>
 	 * @deprecated use the safer method {@link #libusb_get_config_descriptor_by_value(libusbone.LibusboneLibrary.libusb_device, byte, libusbone.libusb_config_descriptor.ByReference[])} instead
 	 */
 	@java.lang.Deprecated
 	int libusb_get_config_descriptor_by_value(libusbone.LibusboneLibrary.libusb_device dev, byte bConfigurationValue, com.sun.jna.ptr.PointerByReference config);
 	/**
 	 * Original signature : <code>int libusb_get_config_descriptor_by_value(libusb_device*, uint8_t, libusb_config_descriptor**)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:757</i>
+	 * <i>native declaration : /usr/include/limits.h:864</i>
 	 */
 	int libusb_get_config_descriptor_by_value(libusbone.LibusboneLibrary.libusb_device dev, byte bConfigurationValue, libusbone.libusb_config_descriptor.ByReference config[]);
 	/**
 	 * Original signature : <code>void libusb_free_config_descriptor(libusb_config_descriptor*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:759</i>
+	 * <i>native declaration : /usr/include/limits.h:866</i>
 	 */
 	void libusb_free_config_descriptor(libusbone.libusb_config_descriptor config);
 	/**
 	 * Original signature : <code>uint8_t libusb_get_bus_number(libusb_device*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:760</i>
+	 * <i>native declaration : /usr/include/limits.h:867</i>
 	 */
 	byte libusb_get_bus_number(libusbone.LibusboneLibrary.libusb_device dev);
 	/**
 	 * Original signature : <code>uint8_t libusb_get_device_address(libusb_device*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:761</i>
+	 * <i>native declaration : /usr/include/limits.h:868</i>
 	 */
 	byte libusb_get_device_address(libusbone.LibusboneLibrary.libusb_device dev);
 	/**
 	 * Original signature : <code>int libusb_get_max_packet_size(libusb_device*, unsigned char)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:762</i>
+	 * <i>native declaration : /usr/include/limits.h:869</i>
 	 */
 	int libusb_get_max_packet_size(libusbone.LibusboneLibrary.libusb_device dev, byte endpoint);
 	/**
 	 * Original signature : <code>int libusb_get_max_iso_packet_size(libusb_device*, unsigned char)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:763</i>
+	 * <i>native declaration : /usr/include/limits.h:870</i>
 	 */
 	int libusb_get_max_iso_packet_size(libusbone.LibusboneLibrary.libusb_device dev, byte endpoint);
 	/**
 	 * Original signature : <code>int libusb_open(libusb_device*, libusb_device_handle**)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:765</i><br>
+	 * <i>native declaration : /usr/include/limits.h:872</i><br>
 	 * @deprecated use the safer method {@link #libusb_open(libusbone.LibusboneLibrary.libusb_device, libusbone.LibusboneLibrary.libusb_device_handle[])} instead
 	 */
 	@java.lang.Deprecated
 	int libusb_open(libusbone.LibusboneLibrary.libusb_device dev, com.sun.jna.ptr.PointerByReference handle);
 	/**
 	 * Original signature : <code>int libusb_open(libusb_device*, libusb_device_handle**)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:765</i>
+	 * <i>native declaration : /usr/include/limits.h:872</i>
 	 */
 	int libusb_open(libusbone.LibusboneLibrary.libusb_device dev, libusbone.LibusboneLibrary.libusb_device_handle handle[]);
 	/**
 	 * Original signature : <code>void libusb_close(libusb_device_handle*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:766</i>
+	 * <i>native declaration : /usr/include/limits.h:873</i>
 	 */
 	void libusb_close(libusbone.LibusboneLibrary.libusb_device_handle dev_handle);
 	/**
 	 * Original signature : <code>libusb_device* libusb_get_device(libusb_device_handle*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:767</i>
+	 * <i>native declaration : /usr/include/limits.h:874</i>
 	 */
 	libusbone.LibusboneLibrary.libusb_device libusb_get_device(libusbone.LibusboneLibrary.libusb_device_handle dev_handle);
 	/**
 	 * Original signature : <code>int libusb_set_configuration(libusb_device_handle*, int)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:769</i>
+	 * <i>native declaration : /usr/include/limits.h:876</i>
 	 */
 	int libusb_set_configuration(libusbone.LibusboneLibrary.libusb_device_handle dev, int configuration);
 	/**
 	 * Original signature : <code>int libusb_claim_interface(libusb_device_handle*, int)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:770</i>
+	 * <i>native declaration : /usr/include/limits.h:877</i>
 	 */
 	int libusb_claim_interface(libusbone.LibusboneLibrary.libusb_device_handle dev, int iface);
 	/**
 	 * Original signature : <code>int libusb_release_interface(libusb_device_handle*, int)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:771</i>
+	 * <i>native declaration : /usr/include/limits.h:878</i>
 	 */
 	int libusb_release_interface(libusbone.LibusboneLibrary.libusb_device_handle dev, int iface);
 	/**
 	 * Original signature : <code>libusb_device_handle* libusb_open_device_with_vid_pid(libusb_context*, uint16_t, uint16_t)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:773</i>
+	 * <i>native declaration : /usr/include/limits.h:880</i>
 	 */
 	libusbone.LibusboneLibrary.libusb_device_handle libusb_open_device_with_vid_pid(libusbone.LibusboneLibrary.libusb_context ctx, short vendor_id, short product_id);
 	/**
 	 * Original signature : <code>int libusb_set_interface_alt_setting(libusb_device_handle*, int, int)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:776</i>
+	 * <i>native declaration : /usr/include/limits.h:883</i>
 	 */
 	int libusb_set_interface_alt_setting(libusbone.LibusboneLibrary.libusb_device_handle dev, int interface_number, int alternate_setting);
 	/**
 	 * Original signature : <code>int libusb_clear_halt(libusb_device_handle*, unsigned char)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:778</i>
+	 * <i>native declaration : /usr/include/limits.h:885</i>
 	 */
 	int libusb_clear_halt(libusbone.LibusboneLibrary.libusb_device_handle dev, byte endpoint);
 	/**
 	 * Original signature : <code>int libusb_reset_device(libusb_device_handle*)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:779</i>
+	 * <i>native declaration : /usr/include/limits.h:886</i>
 	 */
 	int libusb_reset_device(libusbone.LibusboneLibrary.libusb_device_handle dev);
 	/**
 	 * Original signature : <code>int libusb_kernel_driver_active(libusb_device_handle*, int)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:781</i>
+	 * <i>native declaration : /usr/include/limits.h:888</i>
 	 */
 	int libusb_kernel_driver_active(libusbone.LibusboneLibrary.libusb_device_handle dev, int interface_);
 	/**
 	 * Original signature : <code>int libusb_detach_kernel_driver(libusb_device_handle*, int)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:782</i>
+	 * <i>native declaration : /usr/include/limits.h:889</i>
 	 */
 	int libusb_detach_kernel_driver(libusbone.LibusboneLibrary.libusb_device_handle dev, int interface_);
 	/**
 	 * Original signature : <code>int libusb_attach_kernel_driver(libusb_device_handle*, int)</code><br>
-	 * <i>native declaration : /usr/include/limits.h:783</i>
+	 * <i>native declaration : /usr/include/limits.h:890</i>
 	 */
 	int libusb_attach_kernel_driver(libusbone.LibusboneLibrary.libusb_device_handle dev, int interface_);
 	/// Pointer to unknown (opaque) type
@@ -820,6 +1300,15 @@ public interface LibusboneLibrary extends com.sun.jna.Library {
 			super(pointer);
 		}
 		public libusb_context() {
+			super();
+		}
+	}
+	/// Pointer to unknown (opaque) type
+	public static class timespec extends com.sun.jna.PointerType {
+		public timespec(com.sun.jna.Pointer pointer) {
+			super(pointer);
+		}
+		public timespec() {
 			super();
 		}
 	}
