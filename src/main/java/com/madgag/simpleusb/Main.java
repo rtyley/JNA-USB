@@ -1,5 +1,7 @@
 package com.madgag.simpleusb;
 
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 import libusbone.LibusboneLibrary;
@@ -15,13 +17,25 @@ public class Main {
 		System.out.println("r="+r);
 		
 		PointerByReference deviceList = new PointerByReference();
+		deviceList.setPointer(null);
 		int cnt=lib.libusb_get_device_list(libUsbContext, deviceList );
 		System.out.println("choco tomato "+cnt);
+		
+		Memory mem=(Memory) deviceList.getPointer();
+		long size = mem.getSize();
+		System.out.println("size="+size);
 		//list.getValue();
 		
-		libusbone.LibusboneLibrary.libusb_device[] realList= null;
+		Pointer[] pointerArray = deviceList.getPointer().getPointerArray(0,cnt);
+		System.out.println("repro");
 		
-		lib.libusb_free_device_list(deviceList.getPointer(), 1);
+		LibusboneLibrary.libusb_device[] realList= new LibusboneLibrary.libusb_device[cnt];
+		for (int i=0;i<realList.length;++i) {
+			realList[i]=new LibusboneLibrary.libusb_device(pointerArray[i]);
+		}
+		
+		lib.libusb_free_device_list(realList, 1);
+		//lib.libusb_free_device_list(deviceList.getPointer().getPointerArray(base), 1);
 		System.out.println("sap");
 		
 		lib.libusb_exit(libUsbContext);
