@@ -1,12 +1,20 @@
 package com.madgag.simpleusb;
 
-import com.sun.jna.Memory;
+import static java.lang.Integer.toHexString;
+import libusbone.LibusboneLibrary;
+import libusbone.libusb_config_descriptor;
+import libusbone.libusb_device_descriptor;
+import libusbone.LibusboneLibrary.libusb_device_handle;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
-import libusbone.LibusboneLibrary;
-
 public class Main {
+	
+	private static int GARMIN_USB_VID =  0x091e;
+	private static int GARMIN_USB_PID =  0x0003;
+	
+	
 	public static void main(String[] args) {
 		LibusboneLibrary lib = LibusboneLibrary.INSTANCE;
 		
@@ -17,28 +25,70 @@ public class Main {
 		System.out.println("r="+r);
 		
 		PointerByReference deviceList = new PointerByReference();
-		deviceList.setPointer(null);
+//		deviceList.setPointer(null);
 		int cnt=lib.libusb_get_device_list(libUsbContext, deviceList );
 		System.out.println("choco tomato "+cnt);
 		
-		Memory mem=(Memory) deviceList.getPointer();
-		long size = mem.getSize();
-		System.out.println("size="+size);
+//		Memory mem=(Memory) deviceList.getPointer();
+//		long size = mem.getSize();
+//		System.out.println("size="+size);
 		//list.getValue();
 		
-		Pointer[] pointerArray = deviceList.getPointer().getPointerArray(0,cnt);
+		Pointer[] pointerArray = deviceList.getValue().getPointerArray(0,cnt);
 		System.out.println("repro");
 		
 		LibusboneLibrary.libusb_device[] realList= new LibusboneLibrary.libusb_device[cnt];
 		for (int i=0;i<realList.length;++i) {
-			realList[i]=new LibusboneLibrary.libusb_device(pointerArray[i]);
+			LibusboneLibrary.libusb_device libusbDevice = new LibusboneLibrary.libusb_device(pointerArray[i]);
+			System.out.println("Found "+libusbDevice);
+			realList[i]=libusbDevice;
+			
+			libusb_device_descriptor desc = new libusb_device_descriptor();
+			lib.libusb_get_device_descriptor(libusbDevice, desc);
+			System.out.println( toHexString(desc.idVendor)+" "+toHexString(desc.idProduct)+" num conf="+desc.bNumConfigurations);
+			if (isGarmin(desc)) {
+				doSomethingWithGarmin(lib, libusbDevice);
+			}
 		}
 		
-		lib.libusb_free_device_list(realList, 1);
+		lib.libusb_free_device_list(realList, 0);
 		//lib.libusb_free_device_list(deviceList.getPointer().getPointerArray(base), 1);
 		System.out.println("sap");
 		
 		lib.libusb_exit(libUsbContext);
 		System.out.println("bye");
+	}
+
+
+	private static void doSomethingWithGarmin(LibusboneLibrary lib,	LibusboneLibrary.libusb_device libusbDevice) {
+		System.out.println("Found the garmin!");
+		PointerByReference deviceHandleRef = new PointerByReference();
+		int ret=lib.libusb_open(libusbDevice, deviceHandleRef);
+		System.out.println("bangles "+ret);
+		libusb_device_handle deviceHandle = new libusb_device_handle(deviceHandleRef.getValue());
+		int retConf = lib.libusb_set_configuration(deviceHandle, 1);
+		System.out.println("retConf="+retConf);
+		int retClaim =lib.libusb_claim_interface(deviceHandle, 0);
+		System.out.println("retClaim="+retClaim);
+		
+		libusb_config_descriptor configDescriptor = new libusb_config_descriptor();
+		//lib.libusb_get_config_descriptor(libusbDevice, 0, configDescriptor );
+		System.out.println("configDescriptor.bNumInterfaces="+configDescriptor.bNumInterfaces);
+		
+		startGarminSession();
+		
+		//lib.libusb_
+		
+		lib.libusb_close(deviceHandle);
+	}
+
+
+	private static void startGarminSession() {
+		//lib
+	}
+
+
+	private static boolean isGarmin(libusb_device_descriptor desc) {
+		return desc.idVendor==GARMIN_USB_VID && desc.idProduct==GARMIN_USB_PID;
 	}
 }
