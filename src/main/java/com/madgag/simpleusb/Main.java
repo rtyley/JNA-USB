@@ -5,8 +5,10 @@ import libusbone.LibusboneLibrary;
 import libusbone.libusb_config_descriptor;
 import libusbone.libusb_device_descriptor;
 import libusbone.LibusboneLibrary.libusb_device_handle;
+import libusbone.libusb_interface.ByReference;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 public class Main {
@@ -66,25 +68,41 @@ public class Main {
 		int ret=lib.libusb_open(libusbDevice, deviceHandleRef);
 		System.out.println("bangles "+ret);
 		libusb_device_handle deviceHandle = new libusb_device_handle(deviceHandleRef.getValue());
+		
+		IntByReference config = new IntByReference();
+		int retGC=lib.libusb_get_configuration(deviceHandle, config);
+		System.out.println("retGC="+retGC+ " conf=" +config.getValue());
+		
+		
 		int retConf = lib.libusb_set_configuration(deviceHandle, 1);
 		System.out.println("retConf="+retConf);
 		int retClaim =lib.libusb_claim_interface(deviceHandle, 0);
 		System.out.println("retClaim="+retClaim);
 		
-		libusb_config_descriptor configDescriptor = new libusb_config_descriptor();
-		//lib.libusb_get_config_descriptor(libusbDevice, 0, configDescriptor );
+		PointerByReference configDescriptorRef = new PointerByReference();
+		
+		libusb_config_descriptor.ByReference[] t= new libusb_config_descriptor.ByReference[1];
+		int retCD=lib.libusb_get_config_descriptor(libusbDevice, (byte)0, t);
+		System.out.println("retCD="+retCD);
+		System.out.println("t[0]"+t[0]);
+		libusb_config_descriptor configDescriptor = t[0];
 		System.out.println("configDescriptor.bNumInterfaces="+configDescriptor.bNumInterfaces);
+		System.out.println("configDescriptor.interface_.num_altsetting="+configDescriptor.interface_.num_altsetting);
 		
-		startGarminSession();
+		startGarminSession(lib, deviceHandle);
 		
-		//lib.libusb_
 		
 		lib.libusb_close(deviceHandle);
 	}
 
 
-	private static void startGarminSession() {
-		//lib
+	private static void startGarminSession(LibusboneLibrary lib, libusb_device_handle deviceHandle) {
+		byte[] startSessionPacket = GarminPacket.getStartSessionPacket().toBytes();
+		for (int i=0;i<3;++i) {
+		int retBulk=lib.libusb_bulk_transfer(deviceHandle, (byte) 0, startSessionPacket, startSessionPacket.length, new IntByReference(), 3000);
+		//lib.libusb_
+		System.out.println("retBulk="+retBulk);
+		}
 	}
 
 
