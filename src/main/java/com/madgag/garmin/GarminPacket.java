@@ -1,6 +1,8 @@
-package com.madgag.simpleusb;
+package com.madgag.garmin;
 
 import static java.lang.System.arraycopy;
+
+import java.awt.Component.BaselineResizeBehavior;
 
 public class GarminPacket {
 	public enum Type {
@@ -15,6 +17,10 @@ public class GarminPacket {
 		
 		public byte getPacketValue() {
 			return packetValue;
+		}
+		
+		public static Type from(byte typeByte) {
+			return typeByte==0?USB_PROTOCOL_LAYER:APPLICATION_LAYER;
 		}
 	}
 	
@@ -49,6 +55,44 @@ public class GarminPacket {
 		  Pid_Start_Session        = 0x05,
 		  Pid_Session_Started      = 0x06;
 		return new GarminPacket(Type.USB_PROTOCOL_LAYER, Pid_Start_Session, new byte[0]);
+	}
+
+
+	public static GarminPacket from(byte[] b) {
+		int dataLen=b[8]+b[9]<<8+b[10]<<16+b[11]<<24;
+		byte[] data = new byte[dataLen];
+		arraycopy(b, 12, data, 0, dataLen);
+		// TODO Auto-generated method stub
+		return new GarminPacket(
+				Type.from(b[0]),
+				(short) (b[4]+b[5]<<8),
+				data
+				);
+	}
+
+
+	public static GarminPacket getProductRequestPacket() {
+		short
+			  L000_Pid_Protocol_Array       = 0x00fd,
+			  L000_Pid_Product_Rqst         = 0x00fe,
+			  L000_Pid_Product_Data         = 0x00ff,
+			  L000_Pid_Ext_Product_Data     = 0x00f8;
+		return new GarminPacket(Type.USB_PROTOCOL_LAYER, L000_Pid_Product_Rqst, new byte[0]);
+	}
+
+
+	public Type getType() {
+		return type;
+	}
+
+
+	public short getId() {
+		return id;
+	}
+
+
+	public int getSize() {
+		return data.length;
 	}
 	
 }

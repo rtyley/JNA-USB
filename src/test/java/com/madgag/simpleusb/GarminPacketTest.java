@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.Test;
 
+import com.madgag.garmin.GarminPacket;
+
 
 public class GarminPacketTest {
 	@Test
