@@ -2,8 +2,6 @@ package com.madgag.garmin;
 
 import static java.lang.System.arraycopy;
 
-import java.awt.Component.BaselineResizeBehavior;
-
 public class GarminPacket {
 	public enum Type {
 		USB_PROTOCOL_LAYER((byte)0),

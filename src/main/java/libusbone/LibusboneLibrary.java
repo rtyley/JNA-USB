@@ -1268,6 +1268,14 @@ unsigned int 	timeout
 			IntByReference transferred,
 			int timeout);
 	
+	int libusb_interrupt_transfer(
+			libusbone.LibusboneLibrary.libusb_device_handle dev,
+			byte endpoint,
+			byte[] data,
+			int length,
+			IntByReference transferred,
+			int timeout);
+	
 	
 	/**
 	 * Original signature : <code>int libusb_release_interface(libusb_device_handle*, int)</code><br>

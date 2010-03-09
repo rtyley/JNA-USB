@@ -1,6 +1,9 @@
 package com.madgag.garmin;
 
+import static com.madgag.simpleusb.UsbEndpointDirection.IN;
+import static com.madgag.simpleusb.UsbEndpointDirection.OUT;
 import static com.madgag.simpleusb.UsbEndpointType.BULK;
+import static com.madgag.simpleusb.UsbEndpointType.INTERRUPT;
 import static java.lang.Integer.toHexString;
 
 import java.util.EnumMap;
@@ -15,6 +18,7 @@ import libusbone.LibusboneLibrary.libusb_device_handle;
 import libusbone.libusb_interface.ByReference;
 
 import com.madgag.simpleusb.UsbEndpointDirection;
+import com.madgag.simpleusb.UsbEndpointType;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -103,6 +107,8 @@ public class Main {
 		libusb_interface_descriptor[] array = new libusb_interface_descriptor[cdInterface.num_altsetting];
 		altsettingRef.toArray(array);
 		Map<UsbEndpointDirection,libusb_endpoint_descriptor> bulkEndpoints=new EnumMap<UsbEndpointDirection,libusb_endpoint_descriptor>(UsbEndpointDirection.class);
+		libusb_endpoint_descriptor interruptInEndpoint=null;
+		
 		
 		for (libusb_interface_descriptor interfaceDes : array) {
 			libusb_endpoint_descriptor[] endpoints = new libusb_endpoint_descriptor[interfaceDes.bNumEndpoints];
@@ -112,12 +118,14 @@ public class Main {
 				System.out.println(endpoint+" type="+endpoint.getType()+" direction="+endpoint.getDirection());
 				if (endpoint.getType()==BULK) {
 					bulkEndpoints.put(endpoint.getDirection(), endpoint);
+				} else if (endpoint.getType()==INTERRUPT && endpoint.getDirection()==IN) {
+					interruptInEndpoint=endpoint;
 				}
 			}
 			
 		}
 		
-		GarminUsbDevice garminDevice = new GarminUsbDevice(lib, deviceHandle, bulkEndpoints);
+		GarminUsbDevice garminDevice = new GarminUsbDevice(lib, deviceHandle, bulkEndpoints, interruptInEndpoint);
 		startGarminSession(garminDevice);
 		
 		
