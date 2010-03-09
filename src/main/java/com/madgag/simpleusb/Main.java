@@ -1,9 +1,18 @@
 package com.madgag.simpleusb;
 
+import static com.madgag.simpleusb.UsbEndpointDirection.IN;
+import static com.madgag.simpleusb.UsbEndpointDirection.OUT;
+import static com.madgag.simpleusb.UsbEndpointType.BULK;
 import static java.lang.Integer.toHexString;
+
+import java.util.EnumMap;
+import java.util.Map;
+
 import libusbone.LibusboneLibrary;
 import libusbone.libusb_config_descriptor;
 import libusbone.libusb_device_descriptor;
+import libusbone.libusb_endpoint_descriptor;
+import libusbone.libusb_interface_descriptor;
 import libusbone.LibusboneLibrary.libusb_device_handle;
 import libusbone.libusb_interface.ByReference;
 
@@ -89,17 +98,37 @@ public class Main {
 		System.out.println("configDescriptor.bNumInterfaces="+configDescriptor.bNumInterfaces);
 		System.out.println("configDescriptor.interface_.num_altsetting="+configDescriptor.interface_.num_altsetting);
 		
-		startGarminSession(lib, deviceHandle);
+		ByReference cdInterface = configDescriptor.interface_;
+		libusbone.libusb_interface_descriptor.ByReference altsettingRef = cdInterface.altsetting;
+		
+		libusb_interface_descriptor[] array = new libusb_interface_descriptor[cdInterface.num_altsetting];
+		altsettingRef.toArray(array);
+		Map<UsbEndpointDirection,Byte> bulkEndpoints=new EnumMap<UsbEndpointDirection,Byte>(UsbEndpointDirection.class);
+		
+		for (libusb_interface_descriptor interfaceDes : array) {
+			libusb_endpoint_descriptor[] endpoints = new libusb_endpoint_descriptor[interfaceDes.bNumEndpoints];
+			interfaceDes.endpoint.toArray(endpoints);
+			
+			for (libusb_endpoint_descriptor endpoint : endpoints) {
+				System.out.println(endpoint+" type="+endpoint.getType()+" direction="+endpoint.getDirection());
+				if (endpoint.getType()==BULK) {
+					bulkEndpoints.put(endpoint.getDirection(), endpoint.getNumber());
+				}
+			}
+			
+		}
+		
+		startGarminSession(lib, deviceHandle,bulkEndpoints);
 		
 		
 		lib.libusb_close(deviceHandle);
 	}
 
 
-	private static void startGarminSession(LibusboneLibrary lib, libusb_device_handle deviceHandle) {
+	private static void startGarminSession(LibusboneLibrary lib, libusb_device_handle deviceHandle, Map<UsbEndpointDirection, Byte> bulkEndpoints) {
 		byte[] startSessionPacket = GarminPacket.getStartSessionPacket().toBytes();
 		for (int i=0;i<3;++i) {
-		int retBulk=lib.libusb_bulk_transfer(deviceHandle, (byte) 0, startSessionPacket, startSessionPacket.length, new IntByReference(), 3000);
+		int retBulk=lib.libusb_bulk_transfer(deviceHandle, bulkEndpoints.get(OUT), startSessionPacket, startSessionPacket.length, new IntByReference(), 3000);
 		//lib.libusb_
 		System.out.println("retBulk="+retBulk);
 		}

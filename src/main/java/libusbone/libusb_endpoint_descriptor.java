@@ -1,4 +1,8 @@
 package libusbone;
+
+import com.madgag.simpleusb.UsbEndpointDirection;
+import com.madgag.simpleusb.UsbEndpointType;
+
 /**
  * \ingroup desc<br>
  * A structure representing the standard USB endpoint descriptor. This<br>
@@ -78,4 +82,14 @@ public class libusb_endpoint_descriptor extends com.sun.jna.Structure {
 	}
 	public static class ByReference extends libusb_endpoint_descriptor implements com.sun.jna.Structure.ByReference {}
 	public static class ByValue extends libusb_endpoint_descriptor implements com.sun.jna.Structure.ByValue {}
+	
+	public UsbEndpointType getType() {
+		return UsbEndpointType.from(bmAttributes);
+	}
+	public UsbEndpointDirection getDirection() {
+		return UsbEndpointDirection.from(bEndpointAddress);
+	}
+	public byte getNumber() {
+		return (byte)(bmAttributes & 0xF);
+	}
 }
