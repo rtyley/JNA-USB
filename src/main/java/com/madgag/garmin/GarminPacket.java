@@ -65,9 +65,11 @@ public class GarminPacket {
 	}
 
 	public static GarminPacket getProductRequestPacket() {
-		short L000_Pid_Protocol_Array = 0x00fd, L000_Pid_Product_Rqst = 0x00fe, L000_Pid_Product_Data = 0x00ff, L000_Pid_Ext_Product_Data = 0x00f8;
-		return new GarminPacket(Type.USB_PROTOCOL_LAYER, L000_Pid_Product_Rqst,
-				new byte[0]);
+		short L000_Pid_Protocol_Array = 0x00fd,
+		L000_Pid_Product_Rqst = 0x00fe,
+		L000_Pid_Product_Data = 0x00ff,
+		L000_Pid_Ext_Product_Data = 0x00f8;
+		return new GarminPacket(Type.APPLICATION_LAYER, L000_Pid_Product_Rqst, new byte[0]);
 	}
 
 	public Type getType() {
