@@ -25,6 +25,10 @@ public class GarminUsbDevice {
 		public GarminPacket getPacket() {
 			return packet;
 		}
+		
+		public TransferResultStatus getStatus() {
+			return status;
+		}
 	}
 	
 	public static class TransferResultStatus {
@@ -34,6 +38,10 @@ public class GarminUsbDevice {
 		public TransferResultStatus(int returnCode,int transferred) {
 			this.returnCode = returnCode;
 			this.transferred = transferred;
+		}
+		
+		public int getTransferred() {
+			return transferred;
 		}
 		
 		@Override
