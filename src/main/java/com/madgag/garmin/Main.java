@@ -177,6 +177,9 @@ public class Main {
 					List<GarminProtocolData> pds = GarminProtocolData.fromProtocolArrayData(data);
 					done=true;
 					System.out.println(pds);
+					break;
+				default:
+					System.out.println("Ignoring: "+packet);
 			}
 		}
 	}
