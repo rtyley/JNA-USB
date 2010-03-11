@@ -1,6 +1,5 @@
 package com.madgag.garmin;
 
-import static com.madgag.simpleusb.UsbEndpointDirection.IN;
 import static com.madgag.simpleusb.UsbEndpointDirection.OUT;
 
 import java.util.Map;
@@ -63,7 +62,7 @@ public class GarminUsbDevice {
 	}
 	
 	public ReadResult read() {		
-		byte[] packetBytes = new byte[128];
+		byte[] packetBytes = new byte[1024];
 		TransferResultStatus transferResult = interruptTransfer(packetBytes);
 		GarminPacket gp = GarminPacket.from(packetBytes);
 		System.out.println(packetIOSummary("read",gp));
@@ -96,7 +95,7 @@ public class GarminUsbDevice {
 
 
 	private static String packetIOSummary(String io,GarminPacket gp) {
-		String xmlOpen = "<"+io+" type=\""+gp.getType()+"\" id=\""+gp.getId()+"\" size=\""+gp.getSize()+"\"/>\n";
+		String xmlOpen = "<"+io+" type=\""+gp.getType()+"\" id=\"0x"+Integer.toHexString(gp.getId())+"\" size=\""+gp.getSize()+"\"/>\n";
 		for (int i=0;i<gp.getSize();i+=16) {
 			
 		}

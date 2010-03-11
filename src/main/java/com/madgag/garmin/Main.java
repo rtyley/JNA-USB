@@ -6,6 +6,7 @@ import static com.madgag.simpleusb.UsbEndpointType.INTERRUPT;
 import static java.lang.Integer.toHexString;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import libusbone.LibusboneLibrary;
@@ -66,8 +67,6 @@ public class Main {
 		}
 		
 		lib.libusb_free_device_list(realList, 0);
-		//lib.libusb_free_device_list(deviceList.getPointer().getPointerArray(base), 1);
-		System.out.println("sap");
 		
 		lib.libusb_exit(libUsbContext);
 		System.out.println("bye");
@@ -144,16 +143,22 @@ public class Main {
 		int unitId=Bits.getIntL(gp.getData(), 0);
 		System.out.println("Got device id="+unitId +" "+Integer.toHexString(unitId));
 		// should equal 'c50f1700' according to garmin_get_info - not what it says on the back of my watch
+		getA000andA001(garminDevice);
+	}
+
+
+	private static void getA000andA001(GarminUsbDevice garminDevice) {
 		garminDevice.write(GarminPacket.getProductRequestPacket());
-		ReadResult read;
 
 		final short
   L000_Pid_Protocol_Array       = 0x00fd,
   L000_Pid_Product_Rqst         = 0x00fe,
   L000_Pid_Product_Data         = 0x00ff,
   L000_Pid_Ext_Product_Data     = 0x00f8;
-		
-		while ((read=garminDevice.read()).getStatus().getTransferred()>0) {
+
+		ReadResult read;
+		boolean done=false;
+		while (!done && (read=garminDevice.read()).getStatus().getTransferred()>0) {
 			System.out.println("Reading...");
 			GarminPacket packet = read.getPacket();
 			byte[] data = packet.getData();
@@ -163,9 +168,17 @@ public class Main {
 					short softwareVersion = Bits.getShortL(data, 2); // signed...
 					String productDescription = new String(data, 4,data.length-4);
 					System.out.println("productId="+productId+" softwareVersion="+softwareVersion+" productDescription="+productDescription);
+					break;
+				case L000_Pid_Ext_Product_Data:
+					String extData = new String(data);
+					System.out.println("Extra prod data - ignore! : "+extData);
+					break;
+				case L000_Pid_Protocol_Array:
+					List<GarminProtocolData> pds = GarminProtocolData.fromProtocolArrayData(data);
+					done=true;
+					System.out.println(pds);
 			}
 		}
-		
 	}
 
 
