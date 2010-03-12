@@ -1,9 +1,9 @@
 package com.madgag.garmin;
 
+import static com.madgag.simpleusb.Bits.getShortL;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.madgag.simpleusb.Bits;
 
 public class GarminProtocolData {
 	private final char tag;
@@ -17,8 +17,8 @@ public class GarminProtocolData {
 	
 	public static List<GarminProtocolData> fromProtocolArrayData(byte[] paData) {
 		List<GarminProtocolData> dataItems=new ArrayList<GarminProtocolData>();
-		for (int offset=0;offset<paData.length;offset+=12) {
-			dataItems.add(new GarminProtocolData((char)paData[offset], Bits.getShortL(paData, offset+1)));
+		for (int offset=0;offset<paData.length;offset+=3) {
+			dataItems.add(new GarminProtocolData((char)paData[offset], getShortL(paData, offset+1)));
 		}
 		return dataItems;
 	}

@@ -1,10 +1,14 @@
 package com.madgag.garmin;
 
+import static com.madgag.simpleusb.Bits.getShortL;
 import static com.madgag.simpleusb.UsbEndpointDirection.IN;
 import static com.madgag.simpleusb.UsbEndpointType.BULK;
 import static com.madgag.simpleusb.UsbEndpointType.INTERRUPT;
 import static java.lang.Integer.toHexString;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +22,7 @@ import libusbone.LibusboneLibrary.libusb_device_handle;
 import libusbone.libusb_interface.ByReference;
 
 import com.madgag.garmin.GarminUsbDevice.ReadResult;
+import com.madgag.garmin.GarminUsbDevice.TransferResultStatus;
 import com.madgag.simpleusb.Bits;
 import com.madgag.simpleusb.UsbEndpointDirection;
 import com.sun.jna.Pointer;
@@ -30,7 +35,7 @@ public class Main {
 	private static int GARMIN_USB_PID =  0x0003;
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		LibusboneLibrary lib = LibusboneLibrary.INSTANCE;
 		
 		PointerByReference ctx = new PointerByReference();
@@ -73,7 +78,7 @@ public class Main {
 	}
 
 
-	private static void doSomethingWithGarmin(LibusboneLibrary lib,	LibusboneLibrary.libusb_device libusbDevice) {
+	private static void doSomethingWithGarmin(LibusboneLibrary lib,	LibusboneLibrary.libusb_device libusbDevice) throws Exception {
 		System.out.println("Found the garmin!");
 		PointerByReference deviceHandleRef = new PointerByReference();
 		int ret=lib.libusb_open(libusbDevice, deviceHandleRef);
@@ -132,7 +137,7 @@ public class Main {
 	}
 
 
-	private static void startGarminSession(GarminUsbDevice garminDevice) {
+	private static void startGarminSession(GarminUsbDevice garminDevice) throws Exception {
 		for (int i=0;i<3;++i) {
 			garminDevice.write(GarminPacket.getStartSessionPacket());
 		}
@@ -144,8 +149,66 @@ public class Main {
 		System.out.println("Got device id="+unitId +" "+Integer.toHexString(unitId));
 		// should equal 'c50f1700' according to garmin_get_info - not what it says on the back of my watch
 		getA000andA001(garminDevice);
+		
+		getRuns(garminDevice);
 	}
 
+
+	private static void getRuns(GarminUsbDevice garminDevice) throws Exception {
+		TransferResultStatus status = garminDevice.write(GarminPacket.getCommandDataPacket());
+		ReadResult read = garminDevice.read();
+		if (read.getStatus().getTransferred()>0) {
+			int id=read.getPacket().getId();
+			System.out.println("Got packet id="+id +" hex:"+Integer.toHexString(id));
+			short L001_Pid_Records = 0x001b;
+			if (id==L001_Pid_Records) {
+				int numRecords=getShortL(read.getPacket().getData(), 0);
+				System.out.println("numRecords="+numRecords);
+				for (int i=0;i<numRecords;++i) {
+					GarminPacket packet = garminDevice.read().getPacket();
+					byte[] data = packet.getData();
+					unpackD1009(data);
+				}
+			}
+		}
+		
+	}
+
+	
+	private static void unpackD1009(byte[] data) throws IOException {
+		DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
+		int trackIndex=dataInputStream.readUnsignedShort();
+		int first_lap_index=dataInputStream.readUnsignedShort();
+		int last_lap_index=dataInputStream.readUnsignedShort();
+		int sport_type = dataInputStream.readUnsignedByte();
+		int program_type = dataInputStream.readUnsignedByte();
+		int multisport = dataInputStream.readUnsignedByte();
+		dataInputStream.skipBytes(3);
+		int quick_workout_time = dataInputStream.readInt();
+		int quick_workout_distance = dataInputStream.readInt();
+		System.out.println("quick_workout_time="+quick_workout_time);
+	}
+
+
+	/*
+static void
+garmin_unpack_d1009 ( D1009 * run, uint8 ** pos )
+{
+  GETU16(run->track_index);
+  GETU16(run->first_lap_index);
+  GETU16(run->last_lap_index);
+  GETU8(run->sport_type);
+  GETU8(run->program_type);
+  GETU8(run->multisport);
+  SKIP(3);
+  GETU32(run->quick_workout.time);
+  GETF32(run->quick_workout.distance);
+  garmin_unpack_d1008(&run->workout,pos);  
+}
+	 */
+	
+	
+	
 
 	private static void getA000andA001(GarminUsbDevice garminDevice) {
 		garminDevice.write(GarminPacket.getProductRequestPacket());
