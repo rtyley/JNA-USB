@@ -1,14 +1,19 @@
 package com.madgag.garmin;
 
+import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Start_Pvt_Data;
+import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Transfer_Runs;
 import static com.madgag.simpleusb.Bits.getShortL;
 import static com.madgag.simpleusb.UsbEndpointDirection.IN;
 import static com.madgag.simpleusb.UsbEndpointType.BULK;
 import static com.madgag.simpleusb.UsbEndpointType.INTERRUPT;
 import static java.lang.Integer.toHexString;
+import static java.lang.Math.PI;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -149,13 +154,13 @@ public class Main {
 		System.out.println("Got device id="+unitId +" "+Integer.toHexString(unitId));
 		// should equal 'c50f1700' according to garmin_get_info - not what it says on the back of my watch
 		getA000andA001(garminDevice);
-		
-		getRuns(garminDevice);
+		getPVT(garminDevice);
+		//getRuns(garminDevice);
 	}
 
 
 	private static void getRuns(GarminUsbDevice garminDevice) throws Exception {
-		TransferResultStatus status = garminDevice.write(GarminPacket.getCommandDataPacket());
+		TransferResultStatus status = garminDevice.write(GarminPacketFactory.getL001CommandDataPacket(A010_Cmnd_Transfer_Runs));
 		ReadResult read = garminDevice.read();
 		if (read.getStatus().getTransferred()>0) {
 			int id=read.getPacket().getId();
@@ -173,7 +178,52 @@ public class Main {
 		}
 		
 	}
+	
+	private static void getPVT(GarminUsbDevice garminDevice) throws Exception {
+		short L001_Pid_Pvt_Data             = 0x0033;
+		TransferResultStatus status = garminDevice.write(GarminPacketFactory.getL001CommandDataPacket(A010_Cmnd_Start_Pvt_Data));
+		while (true) {
+			ReadResult read = garminDevice.read();
+			GarminPacket packet = read.getPacket();
+			if (packet.getId()==L001_Pid_Pvt_Data) {
+				unpackD800(packet.getData());
+			}
+		}
+		
+	}
+/*
+	typedef struct
+	   {
+	   float32
+	   float32
+	   float32
+	   float32
+	   uint16
+	   float64
+	   radian_position_type
+	   float32
+	   float32
+	   float32
+	   float32
+	   sint16
+	   uint32
+	   } D800_Pvt_Data_Type;
+	   */
 
+	private static void unpackD800(byte[] data) throws IOException {
+		ByteBuffer dataInputStream = ByteBuffer.wrap(data).order( ByteOrder.LITTLE_ENDIAN );
+		//DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
+		float alt=dataInputStream.getFloat();
+		float epe=dataInputStream.getFloat();
+		float eph=dataInputStream.getFloat();
+		float epv=dataInputStream.getFloat();
+		int fix=dataInputStream.getShort();
+		double tow=dataInputStream.getDouble();
+		double lat=dataInputStream.getDouble()*(180/PI);
+		double lon=dataInputStream.getDouble()*(180/PI);
+		System.out.println("lat="+lat+" lon="+lon);
+	}
+	
 	
 	private static void unpackD1009(byte[] data) throws IOException {
 		DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
@@ -189,7 +239,37 @@ public class Main {
 		System.out.println("quick_workout_time="+quick_workout_time);
 	}
 
+	private static void unpackD1002(DataInputStream dataInputStream) throws IOException {
+		int num_valid_steps = dataInputStream.readInt();
+		for (int i=0;i<20;++i) {
+			String workOutName=dataInputStream.readUTF();
+			// all of this stuff is rubbish I'm not really interested in...!
+		}
+	}
+	
+/*
+	static void
+	garmin_unpack_d1002 ( D1002 * wkt, uint8 ** pos )
+	{
+	  int i;
 
+	  GETU32(wkt->num_valid_steps);
+	  for ( i = 0; i < 20; i++ ) {
+	    GETSTR(wkt->steps[i].custom_name);
+	    GETF32(wkt->steps[i].target_custom_zone_low);
+	    GETF32(wkt->steps[i].target_custom_zone_high);
+	    GETU16(wkt->steps[i].duration_value);
+	    GETU8(wkt->steps[i].intensity);
+	    GETU8(wkt->steps[i].duration_type);
+	    GETU8(wkt->steps[i].target_type);
+	    GETU8(wkt->steps[i].target_value);
+	    SKIP(2);
+	  }
+	  GETSTR(wkt->name);
+	  GETU8(wkt->sport_type);
+	}
+	*/
+	
 	/*
 static void
 garmin_unpack_d1009 ( D1009 * run, uint8 ** pos )
@@ -237,9 +317,11 @@ garmin_unpack_d1009 ( D1009 * run, uint8 ** pos )
 					System.out.println("Extra prod data - ignore! : "+extData);
 					break;
 				case L000_Pid_Protocol_Array:
-					List<GarminProtocolData> pds = GarminProtocolData.fromProtocolArrayData(data);
+					List<ProtocolDataTag> pds = ProtocolDataTag.fromProtocolArrayData(data);
+					DeviceProtocols deviceProtocols = DeviceProtocols.from(pds);
 					done=true;
 					System.out.println(pds);
+					System.out.println(deviceProtocols);
 					break;
 				default:
 					System.out.println("Ignoring: "+packet);
