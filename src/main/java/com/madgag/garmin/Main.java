@@ -8,6 +8,8 @@ import static com.madgag.simpleusb.UsbEndpointType.BULK;
 import static com.madgag.simpleusb.UsbEndpointType.INTERRUPT;
 import static java.lang.Integer.toHexString;
 import static java.lang.Math.PI;
+import static java.nio.ByteBuffer.wrap;
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -154,8 +156,8 @@ public class Main {
 		System.out.println("Got device id="+unitId +" "+Integer.toHexString(unitId));
 		// should equal 'c50f1700' according to garmin_get_info - not what it says on the back of my watch
 		getA000andA001(garminDevice);
-		getPVT(garminDevice);
-		//getRuns(garminDevice);
+		//getPVT(garminDevice);
+		getRuns(garminDevice);
 	}
 
 
@@ -211,31 +213,32 @@ public class Main {
 	   */
 
 	private static void unpackD800(byte[] data) throws IOException {
-		ByteBuffer dataInputStream = ByteBuffer.wrap(data).order( ByteOrder.LITTLE_ENDIAN );
-		//DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
-		float alt=dataInputStream.getFloat();
-		float epe=dataInputStream.getFloat();
-		float eph=dataInputStream.getFloat();
-		float epv=dataInputStream.getFloat();
-		int fix=dataInputStream.getShort();
-		double tow=dataInputStream.getDouble();
-		double lat=dataInputStream.getDouble()*(180/PI);
-		double lon=dataInputStream.getDouble()*(180/PI);
+		ByteBuffer buffer = wrap(data).order(LITTLE_ENDIAN);
+		float alt=buffer.getFloat();
+		float epe=buffer.getFloat();
+		float eph=buffer.getFloat();
+		float epv=buffer.getFloat();
+		int fix=buffer.getShort();
+		double tow=buffer.getDouble();
+		double lat=buffer.getDouble()*(180/PI);
+		double lon=buffer.getDouble()*(180/PI);
 		System.out.println("lat="+lat+" lon="+lon);
 	}
 	
 	
 	private static void unpackD1009(byte[] data) throws IOException {
-		DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
-		int trackIndex=dataInputStream.readUnsignedShort();
-		int first_lap_index=dataInputStream.readUnsignedShort();
-		int last_lap_index=dataInputStream.readUnsignedShort();
-		int sport_type = dataInputStream.readUnsignedByte();
-		int program_type = dataInputStream.readUnsignedByte();
-		int multisport = dataInputStream.readUnsignedByte();
-		dataInputStream.skipBytes(3);
-		int quick_workout_time = dataInputStream.readInt();
-		int quick_workout_distance = dataInputStream.readInt();
+		ByteBuffer buffer = wrap(data).order(LITTLE_ENDIAN);
+		int trackIndex=buffer.getShort();
+		int first_lap_index=buffer.getShort();
+		int last_lap_index=buffer.getShort();
+		int sport_type = buffer.get();
+		int program_type = buffer.get();
+		int multisport = buffer.get();
+		buffer.position(buffer.position()+3);
+		
+		
+		int quick_workout_time = buffer.getInt();
+		int quick_workout_distance = buffer.getInt();
 		System.out.println("quick_workout_time="+quick_workout_time);
 	}
 
