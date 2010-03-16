@@ -1,6 +1,7 @@
 package com.madgag.garmin;
 
 import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Start_Pvt_Data;
+import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Transfer_Laps;
 import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Transfer_Runs;
 import static com.madgag.simpleusb.Bits.getShortL;
 import static com.madgag.simpleusb.UsbEndpointDirection.IN;
@@ -11,11 +12,9 @@ import static java.lang.Math.PI;
 import static java.nio.ByteBuffer.wrap;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,36 @@ public class Main {
 	
 	private static int GARMIN_USB_VID =  0x091e;
 	private static int GARMIN_USB_PID =  0x0003;
+	
+	private static short   L001_Pid_Command_Data         = 0x000a,
+	  L001_Pid_Xfer_Cmplt           = 0x000c,
+	  L001_Pid_Date_Time_Data       = 0x000e,
+	  L001_Pid_Position_Data        = 0x0011,
+	  L001_Pid_Prx_Wpt_Data         = 0x0013,
+	  L001_Pid_Records              = 0x001b,
+	  /* L001_Pid_Undocumented_1    = 0x001c, */
+	  L001_Pid_Rte_Hdr              = 0x001d,
+	  L001_Pid_Rte_Wpt_Data         = 0x001e,
+	  L001_Pid_Almanac_Data         = 0x001f,
+	  L001_Pid_Trk_Data             = 0x0022,
+	  L001_Pid_Wpt_Data             = 0x0023,
+	  L001_Pid_Pvt_Data             = 0x0033,
+	  L001_Pid_Rte_Link_Data        = 0x0062,
+	  L001_Pid_Trk_Hdr              = 0x0063,
+	  L001_Pid_FlightBook_Record    = 0x0086,
+	  L001_Pid_Lap                  = 0x0095,
+	  L001_Pid_Wpt_Cat              = 0x0098,
+	  L001_Pid_Run                  = 0x03de,
+	  L001_Pid_Workout              = 0x03df,
+	  L001_Pid_Workout_Occurrence   = 0x03e0,
+	  L001_Pid_Fitness_User_Profile = 0x03e1,
+	  L001_Pid_Workout_Limits       = 0x03e2,
+	  L001_Pid_Course               = 0x0425,
+	  L001_Pid_Course_Lap           = 0x0426,
+	  L001_Pid_Course_Point         = 0x0427,
+	  L001_Pid_Course_Trk_Hdr       = 0x0428,
+	  L001_Pid_Course_Trk_Data      = 0x0429,
+	  L001_Pid_Course_Limits        = 0x042a;
 	
 	
 	public static void main(String[] args) throws Exception {
@@ -158,6 +187,7 @@ public class Main {
 		getA000andA001(garminDevice);
 		//getPVT(garminDevice);
 		getRuns(garminDevice);
+		getLap(garminDevice);
 	}
 
 
@@ -176,13 +206,41 @@ public class Main {
 					byte[] data = packet.getData();
 					unpackD1009(data);
 				}
-			}
+				GarminPacket completeness = garminDevice.read().getPacket();
+				
+				if (completeness.getId()==L001_Pid_Xfer_Cmplt) {
+					System.out.println("Completed RUNS "+completeness);
+				}
+			}	
 		}
-		
+	}
+	
+	private static void getLap(GarminUsbDevice garminDevice) throws Exception {
+		TransferResultStatus status = garminDevice.write(GarminPacketFactory.getL001CommandDataPacket(A010_Cmnd_Transfer_Laps));
+		ReadResult read = garminDevice.read();
+		if (read.getStatus().getTransferred()>0) {
+			int id=read.getPacket().getId();
+			System.out.println("Got packet id="+id +" hex:"+Integer.toHexString(id));
+			short L001_Pid_Records = 0x001b;
+			if (id==L001_Pid_Records) {
+				int numRecords=getShortL(read.getPacket().getData(), 0);
+				System.out.println("numRecords="+numRecords);
+				for (int i=0;i<numRecords;++i) {
+					GarminPacket packet = garminDevice.read().getPacket();
+					byte[] data = packet.getData();
+					unpackD1015(data);
+				}
+				GarminPacket completeness = garminDevice.read().getPacket();
+				
+				if (completeness.getId()==L001_Pid_Xfer_Cmplt) {
+					System.out.println("Completed LAPS "+completeness);
+				}
+			}	
+		}
 	}
 	
 	private static void getPVT(GarminUsbDevice garminDevice) throws Exception {
-		short L001_Pid_Pvt_Data             = 0x0033;
+		
 		TransferResultStatus status = garminDevice.write(GarminPacketFactory.getL001CommandDataPacket(A010_Cmnd_Start_Pvt_Data));
 		while (true) {
 			ReadResult read = garminDevice.read();
@@ -225,6 +283,72 @@ public class Main {
 		System.out.println("lat="+lat+" lon="+lon);
 	}
 	
+	public static class Coord {
+		private final double lon;
+		private final double lat;
+
+		Coord(double lon, double lat) {
+			this.lon = lon;
+			this.lat = lat;
+		}
+		
+		public static Coord fromPositionType(ByteBuffer buffer) {
+			double lat = buffer.getInt()* ( 180D / (1l<<31) );
+			double lon = buffer.getInt()* ( 180D / (1l<<31) );
+			return new Coord(lon, lat);
+		}
+		
+		@Override
+		public String toString() {
+			return lat+","+lon;
+		}
+	}
+	
+	/*
+garmin_unpack_d1015 ( D1015 * lap, uint8 ** pos )
+{
+  GETU16(lap->index);
+  SKIP(2);
+  GETU32(lap->start_time);
+  GETU32(lap->total_time);
+  GETF32(lap->total_dist);
+  GETF32(lap->max_speed);
+  GETPOS(lap->begin);
+  GETPOS(lap->end);
+  GETU16(lap->calories);
+  GETU8(lap->avg_heart_rate);
+  GETU8(lap->max_heart_rate);
+  GETU8(lap->intensity);
+  GETU8(lap->avg_cadence);
+  GETU8(lap->trigger_method);
+
+  GETU8(lap->unknown[0]);
+  GETU8(lap->unknown[1]);
+  GETU8(lap->unknown[2]);
+  GETU8(lap->unknown[3]);
+  GETU8(lap->unknown[4]);
+}
+	 */
+	
+	private static void unpackD1015(byte[] data) throws IOException {
+		ByteBuffer buffer = wrap(data).order(LITTLE_ENDIAN);
+		int lapIndex=buffer.getShort();
+		buffer.position(buffer.position()+2);
+		int start_time=buffer.getInt();
+		int total_time=buffer.getInt();
+		float total_dist = buffer.getFloat();
+		float max_speed = buffer.getFloat();
+		Coord begin = Coord.fromPositionType(buffer), end = Coord.fromPositionType(buffer);
+		int calories=buffer.getShort();
+		byte avg_heart_rate = buffer.get();
+		byte max_heart_rate = buffer.get();
+		byte intensity = buffer.get();
+		byte avg_cadence = buffer.get();
+		byte trigger_method = buffer.get();
+		
+		System.out.println("total_dist="+total_dist+" begin="+begin+" end="+end);
+		
+	}
 	
 	private static void unpackD1009(byte[] data) throws IOException {
 		ByteBuffer buffer = wrap(data).order(LITTLE_ENDIAN);
@@ -235,7 +359,7 @@ public class Main {
 		int program_type = buffer.get();
 		int multisport = buffer.get();
 		buffer.position(buffer.position()+3);
-		
+		System.out.println("trackIndex="+trackIndex+" first_lap_index="+first_lap_index+" last_lap_index="+last_lap_index);
 		
 		int quick_workout_time = buffer.getInt();
 		int quick_workout_distance = buffer.getInt();
@@ -291,6 +415,8 @@ garmin_unpack_d1009 ( D1009 * run, uint8 ** pos )
 	 */
 	
 	
+	
+
 	
 
 	private static void getA000andA001(GarminUsbDevice garminDevice) {
