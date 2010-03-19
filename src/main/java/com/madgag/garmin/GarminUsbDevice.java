@@ -65,7 +65,7 @@ public class GarminUsbDevice {
 		byte[] packetBytes = new byte[1024];
 		TransferResultStatus transferResult = interruptTransfer(packetBytes);
 		GarminPacket gp = GarminPacket.from(packetBytes);
-		System.out.println(packetIOSummary("read",gp));
+		//System.out.println(packetIOSummary("read",gp));
 		return new ReadResult(transferResult, gp);
 	}
 
@@ -74,7 +74,7 @@ public class GarminUsbDevice {
 		IntByReference transferred = new IntByReference();
 		int returnCode=lib.libusb_interrupt_transfer(deviceHandle, interruptInEndpoint.bEndpointAddress, packetBytes, packetBytes.length, transferred, 3000);
 		TransferResultStatus transferResultStatus = new TransferResultStatus(returnCode, transferred.getValue());
-		System.out.println(transferResultStatus);
+		//System.out.println(transferResultStatus);
 		return transferResultStatus;
 	}
 
@@ -88,7 +88,7 @@ public class GarminUsbDevice {
 		IntByReference transferred = new IntByReference();
 		int returnCode=lib.libusb_bulk_transfer(deviceHandle,  endpoint, packetBytes, packetBytes.length, transferred, 3000);
 		TransferResultStatus transferResultStatus = new TransferResultStatus(returnCode, transferred.getValue());
-		System.out.println(transferResultStatus);
+		//System.out.println(transferResultStatus);
 		return transferResultStatus;
 	}
 	
