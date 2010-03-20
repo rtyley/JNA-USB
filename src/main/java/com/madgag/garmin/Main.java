@@ -1,5 +1,6 @@
 package com.madgag.garmin;
 
+import static com.google.common.collect.Maps.newEnumMap;
 import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Start_Pvt_Data;
 import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Transfer_Laps;
 import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Transfer_Runs;
@@ -11,13 +12,10 @@ import static java.lang.Integer.toHexString;
 import static java.lang.Math.PI;
 import static java.nio.ByteBuffer.wrap;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
-import static org.joda.time.DateTimeZone.UTC;
-import static org.joda.time.Duration.standardSeconds;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +27,6 @@ import libusbone.libusb_interface_descriptor;
 import libusbone.LibusboneLibrary.libusb_device_handle;
 import libusbone.libusb_interface.ByReference;
 
-import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
@@ -69,58 +66,71 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		LibusboneLibrary lib = LibusboneLibrary.INSTANCE;
 
-		PointerByReference ctx = new PointerByReference();
-		LibusboneLibrary.libusb_context[] bang = new LibusboneLibrary.libusb_context[0];
-		int r = lib.libusb_init(ctx);
-		LibusboneLibrary.libusb_context libUsbContext = new LibusboneLibrary.libusb_context(
-				ctx.getValue());
-		System.out.println("r=" + r);
+		LibusboneLibrary.libusb_context libUsbContext = getContext(lib);
 
-		PointerByReference deviceList = new PointerByReference();
-		// deviceList.setPointer(null);
-		int cnt = lib.libusb_get_device_list(libUsbContext, deviceList);
-		System.out.println("choco tomato " + cnt);
-
-		// Memory mem=(Memory) deviceList.getPointer();
-		// long size = mem.getSize();
-		// System.out.println("size="+size);
-		// list.getValue();
-
-		Pointer[] pointerArray = deviceList.getValue().getPointerArray(0, cnt);
-		System.out.println("repro");
-
-		LibusboneLibrary.libusb_device[] realList = new LibusboneLibrary.libusb_device[cnt];
-		for (int i = 0; i < realList.length; ++i) {
-			LibusboneLibrary.libusb_device libusbDevice = new LibusboneLibrary.libusb_device(
-					pointerArray[i]);
-			System.out.println("Found " + libusbDevice);
-			realList[i] = libusbDevice;
-
-			libusb_device_descriptor desc = new libusb_device_descriptor();
-			lib.libusb_get_device_descriptor(libusbDevice, desc);
-			System.out.println(toHexString(desc.idVendor) + " "
-					+ toHexString(desc.idProduct) + " num conf="
-					+ desc.bNumConfigurations);
+		LibusboneLibrary.libusb_device[] devices = getDeviceList(lib, libUsbContext);
+		
+		for (LibusboneLibrary.libusb_device libusbDevice : devices) {
+			libusb_device_descriptor desc = getDeviceDescriptor(lib, libusbDevice);
 			if (isGarmin(desc)) {
 				doSomethingWithGarmin(lib, libusbDevice);
 			}
 		}
 
-		lib.libusb_free_device_list(realList, 0);
-
+		lib.libusb_free_device_list(devices, 0); //should be 1, except this mysteriously causes JVM heapdump
+		System.out.println("About to exit context");
 		lib.libusb_exit(libUsbContext);
 		System.out.println("bye");
 	}
 
-	private static void doSomethingWithGarmin(LibusboneLibrary lib,
-			LibusboneLibrary.libusb_device libusbDevice) throws Exception {
-		System.out.println("Found the garmin!");
-		PointerByReference deviceHandleRef = new PointerByReference();
-		int ret = lib.libusb_open(libusbDevice, deviceHandleRef);
-		System.out.println("bangles " + ret);
-		libusb_device_handle deviceHandle = new libusb_device_handle(
-				deviceHandleRef.getValue());
+	private static libusb_device_descriptor getDeviceDescriptor(
+			LibusboneLibrary lib, LibusboneLibrary.libusb_device libusbDevice) {
+		libusb_device_descriptor desc = new libusb_device_descriptor();
+		lib.libusb_get_device_descriptor(libusbDevice, desc);
+		System.out.println(toHexString(desc.idVendor) + " "
+				+ toHexString(desc.idProduct) + " num conf="
+				+ desc.bNumConfigurations);
+		return desc;
+	}
 
+	private static LibusboneLibrary.libusb_context getContext(LibusboneLibrary lib) {
+		PointerByReference ctx = new PointerByReference();
+		LibusboneLibrary.libusb_context[] bang = new LibusboneLibrary.libusb_context[0];
+		int r = lib.libusb_init(ctx);
+		System.out.println("r=" + r);
+		LibusboneLibrary.libusb_context libUsbContext = new LibusboneLibrary.libusb_context(ctx.getValue());
+		return libUsbContext;
+	}
+
+	private static LibusboneLibrary.libusb_device[] getDeviceList(LibusboneLibrary lib, LibusboneLibrary.libusb_context libUsbContext) {
+		PointerByReference deviceList = new PointerByReference();
+		int cnt = lib.libusb_get_device_list(libUsbContext, deviceList);
+		Pointer[] pointerArray = deviceList.getValue().getPointerArray(0, cnt);
+		System.out.println("repro");
+		LibusboneLibrary.libusb_device[] realList = new LibusboneLibrary.libusb_device[cnt];
+		for (int i = 0; i < cnt; ++i) {
+			realList[i] = new LibusboneLibrary.libusb_device(pointerArray[i]);
+		}
+		return realList;
+	}
+
+	private static void doSomethingWithGarmin(LibusboneLibrary lib, LibusboneLibrary.libusb_device libusbDevice) throws Exception {
+		System.out.println("Found the garmin!");
+		libusb_device_handle deviceHandle = getDeviceHandle(lib, libusbDevice);
+
+		libusb_config_descriptor configDescriptor = getConfigDescriptor(lib, libusbDevice, deviceHandle);
+
+		GarminUsbDevice garminUsbDevice = establishGarminUsbDeviceWithConfig(lib, deviceHandle, configDescriptor.interface_);
+		startGarminSession(garminUsbDevice);
+
+		exerciseGarmin(garminUsbDevice);
+		
+		lib.libusb_close(deviceHandle);
+	}
+
+	private static libusb_config_descriptor getConfigDescriptor(
+			LibusboneLibrary lib, LibusboneLibrary.libusb_device libusbDevice,
+			libusb_device_handle deviceHandle) {
 		IntByReference config = new IntByReference();
 		int retGC = lib.libusb_get_configuration(deviceHandle, config);
 		System.out.println("retGC=" + retGC + " conf=" + config.getValue());
@@ -129,8 +139,6 @@ public class Main {
 		System.out.println("retConf=" + retConf);
 		int retClaim = lib.libusb_claim_interface(deviceHandle, 0);
 		System.out.println("retClaim=" + retClaim);
-
-		PointerByReference configDescriptorRef = new PointerByReference();
 
 		libusb_config_descriptor.ByReference[] t = new libusb_config_descriptor.ByReference[1];
 		int retCD = lib.libusb_get_config_descriptor(libusbDevice, (byte) 0, t);
@@ -141,14 +149,28 @@ public class Main {
 				+ configDescriptor.bNumInterfaces);
 		System.out.println("configDescriptor.interface_.num_altsetting="
 				+ configDescriptor.interface_.num_altsetting);
+		return configDescriptor;
+	}
 
-		ByReference cdInterface = configDescriptor.interface_;
+	private static libusb_device_handle getDeviceHandle(LibusboneLibrary lib,
+			LibusboneLibrary.libusb_device libusbDevice) {
+		PointerByReference deviceHandleRef = new PointerByReference();
+		int ret = lib.libusb_open(libusbDevice, deviceHandleRef);
+		System.out.println("bangles " + ret);
+		libusb_device_handle deviceHandle = new libusb_device_handle(
+				deviceHandleRef.getValue());
+		return deviceHandle;
+	}
+
+	private static GarminUsbDevice establishGarminUsbDeviceWithConfig(
+			LibusboneLibrary lib, libusb_device_handle deviceHandle,
+			ByReference cdInterface) {
 		libusbone.libusb_interface_descriptor.ByReference altsettingRef = cdInterface.altsetting;
 
-		libusb_interface_descriptor[] array = new libusb_interface_descriptor[cdInterface.num_altsetting];
-		altsettingRef.toArray(array);
-		Map<UsbEndpointDirection, libusb_endpoint_descriptor> bulkEndpoints = new EnumMap<UsbEndpointDirection, libusb_endpoint_descriptor>(
-				UsbEndpointDirection.class);
+		libusb_interface_descriptor[] array = (libusb_interface_descriptor[]) altsettingRef.toArray(new libusb_interface_descriptor[cdInterface.num_altsetting]);
+		
+		
+		Map<UsbEndpointDirection, libusb_endpoint_descriptor> bulkEndpoints = newEnumMap(UsbEndpointDirection.class);
 		libusb_endpoint_descriptor interruptInEndpoint = null;
 
 		for (libusb_interface_descriptor interfaceDes : array) {
@@ -168,11 +190,8 @@ public class Main {
 
 		}
 
-		GarminUsbDevice garminDevice = new GarminUsbDevice(lib, deviceHandle,
-				bulkEndpoints, interruptInEndpoint);
-		startGarminSession(garminDevice);
-
-		lib.libusb_close(deviceHandle);
+		GarminUsbDevice garminDevice = new GarminUsbDevice(lib, deviceHandle, bulkEndpoints, interruptInEndpoint);
+		return garminDevice;
 	}
 
 	private static void startGarminSession(GarminUsbDevice garminDevice)
@@ -190,10 +209,14 @@ public class Main {
 		// should equal 'c50f1700' according to garmin_get_info - not what it
 		// says on the back of my watch
 		getA000andA001(garminDevice);
+	}
+
+	private static void exerciseGarmin(GarminUsbDevice garminDevice)
+			throws Exception {
 		// getPVT(garminDevice);
 		getRuns(garminDevice);
 		getLaps(garminDevice);
-		getTracks(garminDevice);
+		//getTracks(garminDevice);
 	}
 
 	private static void getTracks(GarminUsbDevice garminDevice)
