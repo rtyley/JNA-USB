@@ -32,6 +32,7 @@ import libusbone.libusb_interface.ByReference;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
+import org.joda.time.Interval;
 
 import com.google.common.collect.ListMultimap;
 import com.madgag.garmin.GarminUsbDevice.ReadResult;
@@ -214,14 +215,10 @@ public class Main {
 									}
 								},
 								new Unpacker<GarminTrackDataDescripter>() {
-									public GarminTrackDataDescripter unpack(
-											GarminPacket packet) {// D304
+									public GarminTrackDataDescripter unpack(GarminPacket packet) {// D304
 										ByteBuffer buffer = wrap(packet.getData()).order(LITTLE_ENDIAN);
 										Coord posn = Coord.fromPositionType(buffer);
-										// 12:00 am December 31, 1989 UTC.
-										Instant EPOCH = new DateTime(1989, 12, 31, 0, 0, 0, 0, UTC).toInstant();
-										int seconds = buffer.getInt();
-										Instant time = EPOCH.plus(standardSeconds(seconds));
+										Instant time = BasicDataTypes.readTimeType(buffer);
 										return new GarminTrackDataDescripter(posn, time);
 									}
 								});
@@ -357,8 +354,11 @@ public class Main {
 		ByteBuffer buffer = wrap(data).order(LITTLE_ENDIAN);
 		int lapIndex = buffer.getShort();
 		buffer.position(buffer.position() + 2);
-		int start_time = buffer.getInt();
-		int total_time = buffer.getInt();
+		 
+		Instant start_time = BasicDataTypes.readTimeType(buffer);
+		Duration total_time = BasicDataTypes.readDurationInCentiseconds(buffer);
+		Interval interval = total_time.toIntervalFrom(start_time);
+		
 		float total_dist = buffer.getFloat();
 		float max_speed = buffer.getFloat();
 		Coord begin = Coord.fromPositionType(buffer), end = Coord
@@ -371,8 +371,8 @@ public class Main {
 		byte trigger_method = buffer.get();
 
 		System.out.println("total_dist=" + total_dist + " begin=" + begin
-				+ " end=" + end);
-		return new GarminLapDescripter(begin, end);
+				+ " end=" + end+" interval="+interval);
+		return new GarminLapDescripter(interval, begin, end);
 	}
 
 	private static GarminRunDescripter unpackD1009(byte[] data)
@@ -469,4 +469,5 @@ public class Main {
 		return desc.idVendor == GARMIN_USB_VID
 				&& desc.idProduct == GARMIN_USB_PID;
 	}
+
 }
