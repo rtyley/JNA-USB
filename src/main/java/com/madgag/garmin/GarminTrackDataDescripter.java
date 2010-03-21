@@ -1,15 +1,13 @@
 package com.madgag.garmin;
 
-import org.joda.time.Instant;
-
-import com.madgag.garmin.Main.Coord;
+import org.joda.time.ReadableInstant;
 
 public class GarminTrackDataDescripter {
 
-	private final Coord posn;
-	private final Instant time;
+	private final BasicDataTypes.Coord posn;
+	private final ReadableInstant time;
 
-	public GarminTrackDataDescripter(Coord posn, Instant time) {
+	public GarminTrackDataDescripter(BasicDataTypes.Coord posn, ReadableInstant time) {
 		this.posn = posn;
 		this.time = time;
 	}

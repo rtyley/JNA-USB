@@ -1,7 +1,6 @@
 package com.madgag.garmin;
 
 import static com.google.common.collect.Maps.newEnumMap;
-import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Start_Pvt_Data;
 import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Transfer_Laps;
 import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Transfer_Runs;
 import static com.madgag.garmin.GarminPacketFactory.A010_Cmnd_Transfer_Trk;
@@ -9,7 +8,6 @@ import static com.madgag.simpleusb.UsbEndpointDirection.IN;
 import static com.madgag.simpleusb.UsbEndpointType.BULK;
 import static com.madgag.simpleusb.UsbEndpointType.INTERRUPT;
 import static java.lang.Integer.toHexString;
-import static java.lang.Math.PI;
 import static java.nio.ByteBuffer.wrap;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
@@ -28,12 +26,10 @@ import libusbone.LibusboneLibrary.libusb_device_handle;
 import libusbone.libusb_interface.ByReference;
 
 import org.joda.time.Duration;
-import org.joda.time.Instant;
 import org.joda.time.Interval;
+import org.joda.time.ReadableInstant;
 
 import com.google.common.collect.ListMultimap;
-import com.madgag.garmin.GarminUsbDevice.ReadResult;
-import com.madgag.garmin.GarminUsbDevice.TransferResultStatus;
 import com.madgag.simpleusb.Bits;
 import com.madgag.simpleusb.UsbEndpointDirection;
 import com.sun.jna.Pointer;
@@ -190,8 +186,7 @@ public class Main {
 
 		}
 
-		GarminUsbDevice garminDevice = new GarminUsbDevice(lib, deviceHandle, bulkEndpoints, interruptInEndpoint);
-		return garminDevice;
+		return new GarminUsbDevice(lib, deviceHandle, bulkEndpoints, interruptInEndpoint);
 	}
 
 	private static void startGarminSession(GarminUsbDevice garminDevice)
@@ -208,12 +203,12 @@ public class Main {
 				+ Integer.toHexString(unitId));
 		// should equal 'c50f1700' according to garmin_get_info - not what it
 		// says on the back of my watch
-		getA000andA001(garminDevice);
+		new ProductRequestProtocol().getA000andA001(garminDevice);
 	}
 
 	private static void exerciseGarmin(GarminUsbDevice garminDevice)
 			throws Exception {
-		// getPVT(garminDevice);
+		new PositionVelocityTimeProtocol().getPVT(garminDevice);
 		getRuns(garminDevice);
 		getLaps(garminDevice);
 		//getTracks(garminDevice);
@@ -240,8 +235,8 @@ public class Main {
 								new Unpacker<GarminTrackDataDescripter>() {
 									public GarminTrackDataDescripter unpack(GarminPacket packet) {// D304
 										ByteBuffer buffer = wrap(packet.getData()).order(LITTLE_ENDIAN);
-										Coord posn = Coord.fromPositionType(buffer);
-										Instant time = BasicDataTypes.readTimeType(buffer);
+										BasicDataTypes.Coord posn = BasicDataTypes.Coord.fromPositionType(buffer);
+										ReadableInstant time = BasicDataTypes.readTimeType(buffer);
 										return new GarminTrackDataDescripter(posn, time);
 									}
 								});
@@ -306,85 +301,19 @@ public class Main {
 				}, garminDevice);
 	}
 
-	private static void getPVT(GarminUsbDevice garminDevice) throws Exception {
-
-		TransferResultStatus status = garminDevice.write(GarminPacketFactory
-				.getL001CommandDataPacket(A010_Cmnd_Start_Pvt_Data));
-		while (true) {
-			ReadResult read = garminDevice.read();
-			GarminPacket packet = read.getPacket();
-			if (packet.getId() == L001_Pid_Pvt_Data) {
-				unpackD800(packet.getData());
-			}
-		}
-
-	}
-
-	/*
-	 * typedef struct { float32 float32 float32 float32 uint16 float64
-	 * radian_position_type float32 float32 float32 float32 sint16 uint32 }
-	 * D800_Pvt_Data_Type;
-	 */
-
-	private static void unpackD800(byte[] data) throws IOException {
-		ByteBuffer buffer = wrap(data).order(LITTLE_ENDIAN);
-		float alt = buffer.getFloat();
-		float epe = buffer.getFloat();
-		float eph = buffer.getFloat();
-		float epv = buffer.getFloat();
-		int fix = buffer.getShort();
-		double tow = buffer.getDouble();
-		double lat = buffer.getDouble() * (180 / PI);
-		double lon = buffer.getDouble() * (180 / PI);
-		System.out.println("lat=" + lat + " lon=" + lon);
-	}
-
-	public static class Coord {
-		private final double lon;
-		private final double lat;
-
-		Coord(double lon, double lat) {
-			this.lon = lon;
-			this.lat = lat;
-		}
-
-		public static Coord fromPositionType(ByteBuffer buffer) {
-			double lat = buffer.getInt() * (180D / (1l << 31));
-			double lon = buffer.getInt() * (180D / (1l << 31));
-			return new Coord(lon, lat);
-		}
-
-		@Override
-		public String toString() {
-			return lat + "," + lon;
-		}
-	}
-
-	/*
-	 * garmin_unpack_d1015 ( D1015 * lap, uint8 ** pos ) { GETU16(lap->index);
-	 * SKIP(2); GETU32(lap->start_time); GETU32(lap->total_time);
-	 * GETF32(lap->total_dist); GETF32(lap->max_speed); GETPOS(lap->begin);
-	 * GETPOS(lap->end); GETU16(lap->calories); GETU8(lap->avg_heart_rate);
-	 * GETU8(lap->max_heart_rate); GETU8(lap->intensity);
-	 * GETU8(lap->avg_cadence); GETU8(lap->trigger_method);
-	 * 
-	 * GETU8(lap->unknown[0]); GETU8(lap->unknown[1]); GETU8(lap->unknown[2]);
-	 * GETU8(lap->unknown[3]); GETU8(lap->unknown[4]); }
-	 */
-
 	private static GarminLapDescripter unpackD1015(byte[] data)
 			throws IOException {
 		ByteBuffer buffer = wrap(data).order(LITTLE_ENDIAN);
 		int lapIndex = buffer.getShort();
 		buffer.position(buffer.position() + 2);
 		 
-		Instant start_time = BasicDataTypes.readTimeType(buffer);
+		ReadableInstant start_time = BasicDataTypes.readTimeType(buffer);
 		Duration total_time = BasicDataTypes.readDurationInCentiseconds(buffer);
 		Interval interval = total_time.toIntervalFrom(start_time);
 		
 		float total_dist = buffer.getFloat();
 		float max_speed = buffer.getFloat();
-		Coord begin = Coord.fromPositionType(buffer), end = Coord
+		BasicDataTypes.Coord begin = BasicDataTypes.Coord.fromPositionType(buffer), end = BasicDataTypes.Coord
 				.fromPositionType(buffer);
 		int calories = buffer.getShort();
 		byte avg_heart_rate = buffer.get();
@@ -449,44 +378,7 @@ public class Main {
 	 * garmin_unpack_d1008(&run->workout,pos); }
 	 */
 
-	private static void getA000andA001(GarminUsbDevice garminDevice) {
-		garminDevice.write(GarminPacket.getProductRequestPacket());
-
-		final short L000_Pid_Protocol_Array = 0x00fd, L000_Pid_Product_Rqst = 0x00fe, L000_Pid_Product_Data = 0x00ff, L000_Pid_Ext_Product_Data = 0x00f8;
-
-		ReadResult read;
-		boolean done = false;
-		while (!done
-				&& (read = garminDevice.read()).getStatus().getTransferred() > 0) {
-			System.out.println("Reading...");
-			GarminPacket packet = read.getPacket();
-			byte[] data = packet.getData();
-			switch (packet.getId()) {
-			case L000_Pid_Product_Data:
-				short productId = Bits.getShortL(data, 0); // unsigned
-				short softwareVersion = Bits.getShortL(data, 2); // signed...
-				String productDescription = new String(data, 4, data.length - 4);
-				System.out.println("productId=" + productId
-						+ " softwareVersion=" + softwareVersion
-						+ " productDescription=" + productDescription);
-				break;
-			case L000_Pid_Ext_Product_Data:
-				String extData = new String(data);
-				System.out.println("Extra prod data - ignore! : " + extData);
-				break;
-			case L000_Pid_Protocol_Array:
-				List<ProtocolDataTag> pds = ProtocolDataTag
-						.fromProtocolArrayData(data);
-				DeviceProtocols deviceProtocols = DeviceProtocols.from(pds);
-				done = true;
-				System.out.println(pds);
-				System.out.println(deviceProtocols);
-				break;
-			default:
-				System.out.println("Ignoring: " + packet);
-			}
-		}
-	}
+	
 
 	private static boolean isGarmin(libusb_device_descriptor desc) {
 		return desc.idVendor == GARMIN_USB_VID
